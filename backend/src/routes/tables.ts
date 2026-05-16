@@ -26,10 +26,10 @@ tablesRouter.get("/", async (_req, res, next) => {
 // POST /tables
 tablesRouter.post("/", async (req, res, next) => {
   try {
-    const { name, description = "", color = "#c0764a" } = req.body;
+    const { name, description = "", color = "#c0764a", pinned = false } = req.body;
     if (!name) return res.status(400).json({ error: "name is required" });
     const id = nanoid();
-    await db.insert(tables).values({ id, name, description, color });
+    await db.insert(tables).values({ id, name, description, color, pinned });
     const table = await db.select().from(tables).where(eq(tables.id, id)).then(r => r[0]);
     res.status(201).json({ ...table, properties: [], rowCount: 0 });
   } catch (err) { next(err); }
@@ -39,8 +39,13 @@ tablesRouter.post("/", async (req, res, next) => {
 tablesRouter.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, description, color } = req.body;
-    await db.update(tables).set({ ...(name && { name }), ...(description !== undefined && { description }), ...(color && { color }) }).where(eq(tables.id, id));
+    const { name, description, color, pinned } = req.body;
+    await db.update(tables).set({
+      ...(name && { name }),
+      ...(description !== undefined && { description }),
+      ...(color && { color }),
+      ...(pinned !== undefined && { pinned }),
+    }).where(eq(tables.id, id));
     const table = await db.select().from(tables).where(eq(tables.id, id)).then(r => r[0]);
     if (!table) return res.status(404).json({ error: "Table not found" });
     res.json(table);

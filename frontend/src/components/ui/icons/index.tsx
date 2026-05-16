@@ -43,3 +43,10 @@ export const IconSort = ({ size = 14, color = "currentColor" }: { size?: number;
     <polyline points="3 6 4 5 5 6" /><polyline points="3 12 4 11 5 12" /><polyline points="3 18 4 17 5 18" />
   </svg>
 );
+
+export const IconPin = ({ size = 14, color = "currentColor", filled = false }: { size?: number; color?: string; filled?: boolean }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : "none"} stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 3l7 7-3 1-3 5-2-2-5 3-1-1 3-5-2-2 5-3 1-3z" />
+    <line x1="4" y1="20" x2="10" y2="14" />
+  </svg>
+);

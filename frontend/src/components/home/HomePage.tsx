@@ -14,10 +14,11 @@ const sortLabels: Record<SortOption, string> = {
   rows_desc: "Most rows",
 };
 
-export const HomePage = ({ tables, onSelectTable, onCreateTable }: {
+export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: {
   tables: Table[];
   onSelectTable: (t: Table) => void;
   onCreateTable: () => void;
+  onTogglePin: (table: Table) => void;
 }) => {
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -33,13 +34,14 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable }: {
       const q = search.toLowerCase();
       t = t.filter(tbl => tbl.name.toLowerCase().includes(q) || tbl.description.toLowerCase().includes(q));
     }
-    return [...t].sort((a, b) => {
+    const sorted = [...t].sort((a, b) => {
       if (sort === "name_asc") return a.name.localeCompare(b.name);
       if (sort === "name_desc") return b.name.localeCompare(a.name);
       if (sort === "rows_asc") return a.rowCount - b.rowCount;
       if (sort === "rows_desc") return b.rowCount - a.rowCount;
       return 0;
     });
+    return sorted.sort((a, b) => Number(b.pinned) - Number(a.pinned));
   }, [tables, search, sort]);
 
   return (
@@ -100,7 +102,7 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable }: {
           </div>
         )}
         {filtered.map(table => (
-          <TableCard key={table.id} table={table} onClick={() => onSelectTable(table)} />
+          <TableCard key={table.id} table={table} onClick={() => onSelectTable(table)} onTogglePin={onTogglePin} />
         ))}
         <button onClick={onCreateTable}
           style={{ width: "100%", border: "1.5px dashed #d5cdc3", borderRadius: 12, padding: 20, textAlign: "center", cursor: "pointer", background: "transparent", transition: "border-color 0.15s" }}

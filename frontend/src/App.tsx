@@ -70,7 +70,13 @@ export default function App() {
       name: updated.name,
       description: updated.description,
       color: updated.color,
+      pinned: updated.pinned,
     });
+    setTables(prev => prev.map(t => (t.id === saved.id ? { ...t, ...saved } : t)));
+  };
+
+  const handleTogglePin = async (table: Table) => {
+    const saved = await updateTable(table.id, { pinned: !table.pinned });
     setTables(prev => prev.map(t => (t.id === saved.id ? { ...t, ...saved } : t)));
   };
 
@@ -142,7 +148,7 @@ export default function App() {
 
   return (
     <>
-      <HomePage tables={tables} onSelectTable={t => setActiveTableId(t.id)} onCreateTable={() => setShowCreate(true)} />
+      <HomePage tables={tables} onSelectTable={t => setActiveTableId(t.id)} onCreateTable={() => setShowCreate(true)} onTogglePin={(table) => { void handleTogglePin(table); }} />
       {showCreate && <CreateTableModal onClose={() => setShowCreate(false)} onCreate={(data) => { void handleCreateTable(data); }} />}
     </>
   );

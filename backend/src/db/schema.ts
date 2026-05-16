@@ -5,6 +5,7 @@ export const tables = sqliteTable("tables", {
   name:        text("name").notNull(),
   description: text("description").notNull().default(""),
   color:       text("color").notNull().default("#c0764a"),
+  pinned:      integer("pinned", { mode: "boolean" }).notNull().default(false),
   createdAt:   integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
