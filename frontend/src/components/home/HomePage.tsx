@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { TableCard } from "./TableCard";
 import { IconButton } from "../../components/ui/IconButton";
-import { IconSearch, IconSort, IconX } from "../../components/ui/icons";
+import { IconSearch, IconSort, IconFilter, IconX } from "../../components/ui/icons";
 import type { Table } from "../../types";
 
 type SortOption = "recent" | "name_asc" | "name_desc" | "rows_asc" | "rows_desc";
@@ -23,7 +23,13 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [sort, setSort] = useState<SortOption>("recent");
+  const [filters, setFilters] = useState<{ pinnedOnly: boolean; hasRows: boolean; noRows: boolean }>({
+    pinnedOnly: false,
+    hasRows: false,
+    noRows: false,
+  });
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { if (searchOpen) searchRef.current?.focus(); }, [searchOpen]);
@@ -34,6 +40,9 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
       const q = search.toLowerCase();
       t = t.filter(tbl => tbl.name.toLowerCase().includes(q) || tbl.description.toLowerCase().includes(q));
     }
+    if (filters.pinnedOnly) t = t.filter(tbl => tbl.pinned);
+    if (filters.hasRows) t = t.filter(tbl => tbl.rowCount > 0);
+    if (filters.noRows) t = t.filter(tbl => tbl.rowCount === 0);
     const sorted = [...t].sort((a, b) => {
       if (sort === "name_asc") return a.name.localeCompare(b.name);
       if (sort === "name_desc") return b.name.localeCompare(a.name);
@@ -42,7 +51,9 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
       return 0;
     });
     return sorted.sort((a, b) => Number(b.pinned) - Number(a.pinned));
-  }, [tables, search, sort]);
+  }, [tables, search, sort, filters]);
+
+  const activeFilterCount = Number(filters.pinnedOnly) + Number(filters.hasRows) + Number(filters.noRows);
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f2ee", fontFamily: "'DM Sans', sans-serif" }}>
@@ -56,6 +67,35 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
               active={searchOpen} activeColor="#c0764a" title="Search tables">
               <IconSearch size={15} />
             </IconButton>
+            <div style={{ position: "relative" }}>
+              <IconButton
+                onClick={() => { setFilterOpen(o => !o); setSearchOpen(false); setSortOpen(false); }}
+                active={filterOpen || activeFilterCount > 0} activeColor="#c0764a" title="Filter tables">
+                <IconFilter size={15} />
+              </IconButton>
+              {filterOpen && (
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 6px)", background: "#fff", border: "1px solid #e5dfd7", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.1)", zIndex: 20, minWidth: 190, padding: 8 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#3d3028", padding: "6px 8px", cursor: "pointer" }}>
+                    <input type="checkbox" checked={filters.pinnedOnly} onChange={e => setFilters(prev => ({ ...prev, pinnedOnly: e.target.checked }))} />
+                    Pinned only
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#3d3028", padding: "6px 8px", cursor: "pointer" }}>
+                    <input type="checkbox" checked={filters.hasRows} onChange={e => setFilters(prev => ({ ...prev, hasRows: e.target.checked, noRows: e.target.checked ? false : prev.noRows }))} />
+                    Has rows
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#3d3028", padding: "6px 8px", cursor: "pointer" }}>
+                    <input type="checkbox" checked={filters.noRows} onChange={e => setFilters(prev => ({ ...prev, noRows: e.target.checked, hasRows: e.target.checked ? false : prev.hasRows }))} />
+                    No rows
+                  </label>
+                  {activeFilterCount > 0 && (
+                    <button onClick={() => setFilters({ pinnedOnly: false, hasRows: false, noRows: false })}
+                      style={{ marginTop: 6, width: "100%", border: "1px solid #e5dfd7", borderRadius: 8, background: "#faf8f5", fontSize: 12, color: "#8a7d70", padding: "6px 8px", cursor: "pointer" }}>
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             <div style={{ position: "relative" }}>
               <IconButton
                 onClick={() => { setSortOpen(o => !o); setSearchOpen(false); }}
@@ -94,6 +134,14 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
         <span style={{ fontSize: 11, color: "#b0a898" }}>{filtered.length} table{filtered.length !== 1 ? "s" : ""}</span>
         <span style={{ fontSize: 11, color: "#b0a898" }}>{sortLabels[sort]}</span>
       </div>
+
+      {activeFilterCount > 0 && (
+        <div style={{ padding: "4px 16px 2px", display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {filters.pinnedOnly && <button onClick={() => setFilters(prev => ({ ...prev, pinnedOnly: false }))} style={{ border: "1px solid #d5cdc3", borderRadius: 999, background: "#faf8f5", color: "#8a7d70", fontSize: 11, padding: "3px 8px", cursor: "pointer" }}>Pinned ×</button>}
+          {filters.hasRows && <button onClick={() => setFilters(prev => ({ ...prev, hasRows: false }))} style={{ border: "1px solid #d5cdc3", borderRadius: 999, background: "#faf8f5", color: "#8a7d70", fontSize: 11, padding: "3px 8px", cursor: "pointer" }}>Has rows ×</button>}
+          {filters.noRows && <button onClick={() => setFilters(prev => ({ ...prev, noRows: false }))} style={{ border: "1px solid #d5cdc3", borderRadius: 999, background: "#faf8f5", color: "#8a7d70", fontSize: 11, padding: "3px 8px", cursor: "pointer" }}>No rows ×</button>}
+        </div>
+      )}
 
       <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
         {filtered.length === 0 && (

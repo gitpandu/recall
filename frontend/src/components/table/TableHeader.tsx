@@ -1,17 +1,20 @@
-import { useRef, useEffect } from "react";
+﻿import { useRef, useEffect } from "react";
 import { ColorDot } from "../../components/ui/ColorDot";
 import { IconButton } from "../../components/ui/IconButton";
 import { InlineEdit } from "../../components/ui/InlineEdit";
-import { IconSearch, IconSliders, IconX } from "../../components/ui/icons";
+import { IconSearch, IconSliders, IconFilter, IconX } from "../../components/ui/icons";
 import type { Table } from "../../types";
 
-export const TableHeader = ({ table, search, searchOpen, onUpdateTable, onSearchChange, onToggleSearch, onManageProps }: {
+export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilterCount, onUpdateTable, onSearchChange, onToggleSearch, onToggleFilters, onManageProps }: {
   table: Table;
   search: string;
   searchOpen: boolean;
+  filtersOpen: boolean;
+  activeFilterCount: number;
   onUpdateTable: (t: Table) => void;
   onSearchChange: (v: string) => void;
   onToggleSearch: () => void;
+  onToggleFilters: () => void;
   onManageProps: () => void;
 }) => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -28,7 +31,7 @@ export const TableHeader = ({ table, search, searchOpen, onUpdateTable, onSearch
                 style={{ fontSize: 15, fontWeight: 700, color: "#2d2520" }} />
             </div>
             <div style={{ marginLeft: 17 }}>
-              <InlineEdit value={table.description} onChange={description => onUpdateTable({ ...table, description })} placeholder="Add a description…"
+              <InlineEdit value={table.description} onChange={description => onUpdateTable({ ...table, description })} placeholder="Add a description..."
                 style={{ fontSize: 12, color: "#a09080" }} multiline />
             </div>
           </div>
@@ -36,6 +39,9 @@ export const TableHeader = ({ table, search, searchOpen, onUpdateTable, onSearch
             <span style={{ fontSize: 11, color: "#b0a898" }}>{table.rowCount} rows</span>
             <IconButton onClick={onToggleSearch} active={searchOpen} activeColor={table.color} title="Search">
               <IconSearch size={15} />
+            </IconButton>
+            <IconButton onClick={onToggleFilters} active={filtersOpen || activeFilterCount > 0} activeColor={table.color} title="Filters">
+              <IconFilter size={15} />
             </IconButton>
             <IconButton onClick={onManageProps} activeColor={table.color} title="Manage properties">
               <IconSliders size={15} />
@@ -45,7 +51,7 @@ export const TableHeader = ({ table, search, searchOpen, onUpdateTable, onSearch
 
         {searchOpen && (
           <div style={{ position: "relative", marginTop: 10 }}>
-            <input ref={searchRef} value={search} onChange={e => onSearchChange(e.target.value)} placeholder="Search records…"
+            <input ref={searchRef} value={search} onChange={e => onSearchChange(e.target.value)} placeholder="Search records..."
               style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "7px 32px 7px 12px", fontSize: 13, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box" }}
               onFocus={e => e.currentTarget.style.borderColor = table.color} onBlur={e => e.currentTarget.style.borderColor = "#e5dfd7"} />
             {search && (

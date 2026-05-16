@@ -44,6 +44,12 @@ export const IconSort = ({ size = 14, color = "currentColor" }: { size?: number;
   </svg>
 );
 
+export const IconFilter = ({ size = 14, color = "currentColor" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="3 4 21 4 14 12 14 19 10 21 10 12 3 4" />
+  </svg>
+);
+
 export const IconPin = ({ size = 14, color = "currentColor", filled = false }: { size?: number; color?: string; filled?: boolean }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : "none"} stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 3l7 7-3 1-3 5-2-2-5 3-1-1 3-5-2-2 5-3 1-3z" />

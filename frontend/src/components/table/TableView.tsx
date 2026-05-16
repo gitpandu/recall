@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo, useEffect } from "react";
 import { TableHeader } from "./TableHeader";
 import { TableGrid } from "./TableGrid";
 import { RowModal } from "./RowModal";
@@ -7,6 +7,38 @@ import { AttachmentGallery } from "./AttachmentGallery";
 import { IconChevronLeft, IconPlus } from "../../components/ui/icons";
 import { PAGE_SIZE } from "../../constants";
 import type { Table, Row, Property, Attachment } from "../../types";
+
+type FilterCondition = {
+  id: string;
+  propertyId: string;
+  valueText: string;
+  valueNumber: string;
+  valueBoolean: "any" | "true" | "false";
+  valueSelect: string;
+  valueMulti: string;
+  dateStart: string;
+  dateEnd: string;
+};
+
+const createFilter = (propertyId: string): FilterCondition => ({
+  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  propertyId,
+  valueText: "",
+  valueNumber: "",
+  valueBoolean: "any",
+  valueSelect: "",
+  valueMulti: "",
+  dateStart: "",
+  dateEnd: "",
+});
+
+const normalizeDate = (value: unknown): string => {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return raw;
+  return date.toISOString().slice(0, 10);
+};
 
 export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSaveProperties, onUploadAttachment, onDeleteAttachment, onDeleteTable, onDeleteRow }: {
   table: Table;
@@ -21,6 +53,8 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
 }) => {
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterCondition[]>([]);
   const [sortPropId, setSortPropId] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
@@ -28,12 +62,75 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   const [showManageProps, setShowManageProps] = useState(false);
   const [galleryRow, setGalleryRow] = useState<Row | null>(null);
 
+  const propertiesById = useMemo(() => new Map(table.properties.map(p => [p.id, p])), [table.properties]);
+
+  const activeFilters = useMemo(() => filters.filter(filter => {
+    const prop = propertiesById.get(filter.propertyId);
+    if (!prop) return false;
+    if (prop.type === "text" || prop.type === "longtext") return Boolean(filter.valueText.trim());
+    if (prop.type === "number" || prop.type === "currency_idr") return filter.valueNumber !== "";
+    if (prop.type === "checkbox") return filter.valueBoolean !== "any";
+    if (prop.type === "select") return Boolean(filter.valueSelect);
+    if (prop.type === "multiselect") return Boolean(filter.valueMulti);
+    if (prop.type === "date") return Boolean(filter.dateStart || filter.dateEnd);
+    return false;
+  }), [filters, propertiesById]);
+
+  useEffect(() => {
+    setFilters(prev => prev.filter(f => propertiesById.has(f.propertyId)));
+  }, [propertiesById]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filters, table.id]);
+
   const filtered = useMemo(() => {
     let rows = table.rows ?? [];
     if (search.trim()) {
       const q = search.toLowerCase();
       rows = rows.filter(row => table.properties.some(p => String(row.values[p.id] ?? "").toLowerCase().includes(q)));
     }
+
+    if (activeFilters.length > 0) {
+      rows = rows.filter(row => activeFilters.every(filter => {
+        const prop = propertiesById.get(filter.propertyId);
+        if (!prop) return true;
+        const value = row.values[filter.propertyId];
+
+        if (prop.type === "text" || prop.type === "longtext") {
+          return String(value ?? "").toLowerCase().includes(filter.valueText.toLowerCase().trim());
+        }
+
+        if (prop.type === "number" || prop.type === "currency_idr") {
+          return Number(value) === Number(filter.valueNumber);
+        }
+
+        if (prop.type === "checkbox") {
+          if (filter.valueBoolean === "true") return Boolean(value);
+          if (filter.valueBoolean === "false") return !Boolean(value);
+          return true;
+        }
+
+        if (prop.type === "select") {
+          return String(value ?? "") === filter.valueSelect;
+        }
+
+        if (prop.type === "multiselect") {
+          return Array.isArray(value) && value.map(String).includes(filter.valueMulti);
+        }
+
+        if (prop.type === "date") {
+          const rowDate = normalizeDate(value);
+          if (!rowDate) return false;
+          if (filter.dateStart && rowDate < filter.dateStart) return false;
+          if (filter.dateEnd && rowDate > filter.dateEnd) return false;
+          return true;
+        }
+
+        return true;
+      }));
+    }
+
     if (sortPropId) {
       const prop = table.properties.find(p => p.id === sortPropId);
       rows = [...rows].sort((a, b) => {
@@ -46,7 +143,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
       });
     }
     return rows;
-  }, [table.rows, table.properties, search, sortPropId, sortDir]);
+  }, [table.rows, table.properties, search, sortPropId, sortDir, activeFilters, propertiesById]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
 
@@ -69,9 +166,22 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
     if (searchOpen) { setSearch(""); setPage(1); }
   };
 
-  const handleSearchChange = (v: string) => {
-    setSearch(v);
-    setPage(1);
+  const addFilter = () => {
+    if (table.properties.length === 0) return;
+    setFilters(prev => [...prev, createFilter(table.properties[0].id)]);
+    setFiltersOpen(true);
+  };
+
+  const updateFilter = (id: string, patch: Partial<FilterCondition>) => {
+    setFilters(prev => prev.map(f => f.id === id ? { ...f, ...patch } : f));
+  };
+
+  const removeFilter = (id: string) => {
+    setFilters(prev => prev.filter(f => f.id !== id));
+  };
+
+  const clearFilters = () => {
+    setFilters([]);
   };
 
   const handleDeleteTable = async () => {
@@ -108,11 +218,112 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         table={table}
         search={search}
         searchOpen={searchOpen}
+        filtersOpen={filtersOpen}
+        activeFilterCount={activeFilters.length}
         onUpdateTable={onUpdateTable}
-        onSearchChange={handleSearchChange}
+        onSearchChange={setSearch}
         onToggleSearch={handleToggleSearch}
+        onToggleFilters={() => setFiltersOpen(o => !o)}
         onManageProps={() => setShowManageProps(true)}
       />
+
+      {filtersOpen && (
+        <div style={{ padding: "10px 16px", borderBottom: "1px solid #e5dfd7", background: "#faf8f5", display: "grid", gap: 8 }}>
+          {filters.map(filter => {
+            const prop = propertiesById.get(filter.propertyId);
+            if (!prop) return null;
+            return (
+              <div key={filter.id} style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr auto", gap: 8, alignItems: "center" }}>
+                <select
+                  value={filter.propertyId}
+                  onChange={e => updateFilter(filter.id, { propertyId: e.target.value, valueText: "", valueNumber: "", valueBoolean: "any", valueSelect: "", valueMulti: "", dateStart: "", dateEnd: "" })}
+                  style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", fontSize: 12 }}>
+                  {table.properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+
+                {(prop.type === "text" || prop.type === "longtext") && (
+                  <input value={filter.valueText} onChange={e => updateFilter(filter.id, { valueText: e.target.value })} placeholder="contains..."
+                    style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", fontSize: 12 }} />
+                )}
+                {(prop.type === "number" || prop.type === "currency_idr") && (
+                  <input type="number" value={filter.valueNumber} onChange={e => updateFilter(filter.id, { valueNumber: e.target.value })} placeholder="equals"
+                    style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", fontSize: 12 }} />
+                )}
+                {prop.type === "checkbox" && (
+                  <select value={filter.valueBoolean} onChange={e => updateFilter(filter.id, { valueBoolean: e.target.value as FilterCondition["valueBoolean"] })}
+                    style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", fontSize: 12 }}>
+                    <option value="any">Any</option>
+                    <option value="true">Checked</option>
+                    <option value="false">Unchecked</option>
+                  </select>
+                )}
+                {prop.type === "select" && (
+                  <select value={filter.valueSelect} onChange={e => updateFilter(filter.id, { valueSelect: e.target.value })}
+                    style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", fontSize: 12 }}>
+                    <option value="">Any option</option>
+                    {(prop.options ?? []).map(option => <option key={option} value={option}>{option}</option>)}
+                  </select>
+                )}
+                {prop.type === "multiselect" && (
+                  <select value={filter.valueMulti} onChange={e => updateFilter(filter.id, { valueMulti: e.target.value })}
+                    style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", fontSize: 12 }}>
+                    <option value="">Any option</option>
+                    {(prop.options ?? []).map(option => <option key={option} value={option}>{option}</option>)}
+                  </select>
+                )}
+                {prop.type === "date" && (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                    <input type="date" value={filter.dateStart} onChange={e => updateFilter(filter.id, { dateStart: e.target.value })}
+                      style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 8px", background: "#fff", fontSize: 12 }} />
+                    <input type="date" value={filter.dateEnd} onChange={e => updateFilter(filter.id, { dateEnd: e.target.value })}
+                      style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 8px", background: "#fff", fontSize: 12 }} />
+                  </div>
+                )}
+
+                <button onClick={() => removeFilter(filter.id)}
+                  style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 9px", background: "#fff", color: "#b55a5a", fontSize: 12, cursor: "pointer" }}>
+                  Remove
+                </button>
+              </div>
+            );
+          })}
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button onClick={addFilter}
+              style={{ border: `1px solid ${table.color}44`, borderRadius: 8, padding: "7px 10px", background: `${table.color}11`, color: table.color, fontSize: 12, cursor: "pointer" }}>
+              + Add filter
+            </button>
+            {filters.length > 0 && (
+              <button onClick={clearFilters}
+                style={{ border: "1px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", background: "#fff", color: "#8a7d70", fontSize: 12, cursor: "pointer" }}>
+                Clear all
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeFilters.length > 0 && (
+        <div style={{ padding: "8px 16px", borderBottom: "1px solid #e5dfd7", background: "#faf8f5", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          {activeFilters.map(filter => {
+            const prop = propertiesById.get(filter.propertyId);
+            if (!prop) return null;
+            let label = "";
+            if (prop.type === "text" || prop.type === "longtext") label = `${prop.name}: contains \"${filter.valueText}\"`;
+            if (prop.type === "number" || prop.type === "currency_idr") label = `${prop.name}: = ${filter.valueNumber}`;
+            if (prop.type === "checkbox") label = `${prop.name}: ${filter.valueBoolean === "true" ? "checked" : "unchecked"}`;
+            if (prop.type === "select") label = `${prop.name}: ${filter.valueSelect}`;
+            if (prop.type === "multiselect") label = `${prop.name}: has ${filter.valueMulti}`;
+            if (prop.type === "date") label = `${prop.name}: ${filter.dateStart || "..."} to ${filter.dateEnd || "..."}`;
+            return (
+              <button key={filter.id} onClick={() => removeFilter(filter.id)}
+                style={{ border: `1px solid ${prop.color}44`, borderRadius: 999, padding: "3px 10px", background: `${prop.color}1a`, color: prop.color, fontSize: 11, cursor: "pointer" }}>
+                {label} ×
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <TableGrid
         table={table}
