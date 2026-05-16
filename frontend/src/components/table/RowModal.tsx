@@ -146,39 +146,35 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
             </div>
           ))}
 
-          <div>
-            <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>
-              Attachments {attachments.length > 0 && `(${attachments.length})`}
-            </label>
-            {attachments.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 8 }}>
-                {attachments.map(a => (
-                  <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 8, background: "#fff", border: "1px solid #e5dfd7" }}>
-                    <span style={{ color: "#b0a898" }}><IconPaperclip size={13} /></span>
-                    <span style={{ fontSize: 13, color: "#3d3028", flex: 1 }}>{a.name}</span>
-                    <button onClick={() => { void handleDeleteAttachment(a.id); }}
-                      style={{ color: "#d5cdc3", background: "none", border: "none", cursor: "pointer", display: "flex" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#b55a5a"} onMouseLeave={e => e.currentTarget.style.color = "#d5cdc3"}>
-                      <IconX size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {row ? (
+          {row && (
+            <div>
+              <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>
+                Attachments {attachments.length > 0 && `(${attachments.length})`}
+              </label>
+              {attachments.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 8 }}>
+                  {attachments.map(a => (
+                    <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 8, background: "#fff", border: "1px solid #e5dfd7" }}>
+                      <span style={{ color: "#b0a898" }}><IconPaperclip size={13} /></span>
+                      <span style={{ fontSize: 13, color: "#3d3028", flex: 1 }}>{a.name}</span>
+                      <button onClick={() => { void handleDeleteAttachment(a.id); }}
+                        style={{ color: "#d5cdc3", background: "none", border: "none", cursor: "pointer", display: "flex" }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#b55a5a"} onMouseLeave={e => e.currentTarget.style.color = "#d5cdc3"}>
+                        <IconX size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <label style={{ display: "block", width: "100%", border: "1.5px dashed #d5cdc3", borderRadius: 8, padding: 10, textAlign: "center", color: "#8a7d70", fontSize: 13, cursor: uploading ? "default" : "pointer", opacity: uploading ? 0.6 : 1 }}>
                 {uploading ? "Uploading..." : "+ Add attachment"}
                 <input type="file" onChange={(e) => { void handleFileChange(e); }} disabled={uploading} style={{ display: "none" }} />
               </label>
-            ) : (
-              <div style={{ width: "100%", border: "1.5px dashed #d5cdc3", borderRadius: 8, padding: 10, textAlign: "center", color: "#b0a898", fontSize: 13 }}>
-                Save this row first, then add attachments
-              </div>
-            )}
-            {attachmentError && (
-              <div style={{ marginTop: 8, fontSize: 12, color: "#b55a5a" }}>{attachmentError}</div>
-            )}
-          </div>
+              {attachmentError && (
+                <div style={{ marginTop: 8, fontSize: 12, color: "#b55a5a" }}>{attachmentError}</div>
+              )}
+            </div>
+          )}
 
           {row && (
             <div style={{ background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "10px 12px", display: "grid", gap: 6 }}>

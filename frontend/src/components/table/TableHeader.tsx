@@ -32,7 +32,6 @@ export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilt
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginTop: 2 }}>
-            <span style={{ fontSize: 11, color: "#b0a898" }}>{table.rowCount} rows</span>
             <IconButton onClick={onToggleSearch} active={searchOpen} activeColor={table.color} title="Search">
               <IconSearch size={15} />
             </IconButton>

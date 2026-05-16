@@ -331,6 +331,17 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         </div>
       )}
 
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid #e5dfd7", background: "#faf8f5" }}>
+        <span style={{ fontSize: 12, color: "#b0a898" }}>{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === 1 ? "default" : "pointer", opacity: page === 1 ? 0.4 : 1 }}>←</button>
+          <span style={{ fontSize: 12, color: "#8a7d70" }}>{page} / {totalPages}</span>
+          <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === totalPages ? "default" : "pointer", opacity: page === totalPages ? 0.4 : 1 }}>→</button>
+        </div>
+      </div>
+
       <TableGrid
         table={table}
         filtered={filtered}
@@ -343,22 +354,12 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         onSort={handleSort}
       />
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderTop: "1px solid #e5dfd7", background: "#faf8f5" }}>
-        <span style={{ fontSize: 12, color: "#b0a898" }}>{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === 1 ? "default" : "pointer", opacity: page === 1 ? 0.4 : 1 }}>←</button>
-          <span style={{ fontSize: 12, color: "#8a7d70" }}>{page} / {totalPages}</span>
-          <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === totalPages ? "default" : "pointer", opacity: page === totalPages ? 0.4 : 1 }}>→</button>
-        </div>
-      </div>
-
       <button onClick={() => setRowModal({ open: true, row: null })}
-        style={{ position: "fixed", bottom: 28, right: 24, zIndex: 40, width: 52, height: 52, borderRadius: "50%", background: table.color, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 20px ${table.color}55`, transition: "transform 0.15s, box-shadow 0.15s" }}
-        onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = `0 6px 24px ${table.color}77`; }}
+        style={{ position: "fixed", bottom: 28, right: 24, zIndex: 40, display: "inline-flex", alignItems: "center", gap: 8, borderRadius: 999, background: table.color, border: "none", cursor: "pointer", padding: "14px 18px", boxShadow: `0 4px 20px ${table.color}55`, transition: "transform 0.15s, box-shadow 0.15s" }}
+        onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.boxShadow = `0 6px 24px ${table.color}77`; }}
         onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 20px ${table.color}55`; }}>
-        <IconPlus size={22} color="#fff" />
+        <IconPlus size={18} color="#fff" />
+        <span style={{ color: "#fff", fontSize: 13, fontWeight: 700, letterSpacing: "0.01em" }}>Add Row</span>
       </button>
 
       {rowModal.open && (
