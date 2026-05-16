@@ -8,7 +8,7 @@ import { IconChevronLeft, IconPlus } from "../../components/ui/icons";
 import { PAGE_SIZE } from "../../constants";
 import type { Table, Row, Property, Attachment } from "../../types";
 
-export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSaveProperties, onUploadAttachment, onDeleteAttachment }: {
+export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSaveProperties, onUploadAttachment, onDeleteAttachment, onDeleteTable, onDeleteRow }: {
   table: Table;
   onBack: () => void;
   onUpdateTable: (t: Table) => Promise<void>;
@@ -16,6 +16,8 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   onSaveProperties: (properties: Property[]) => Promise<void>;
   onUploadAttachment: (rowId: string, file: File) => Promise<Attachment>;
   onDeleteAttachment: (rowId: string, attachmentId: string) => Promise<void>;
+  onDeleteTable: (tableId: string) => Promise<void>;
+  onDeleteRow: (rowId: string) => Promise<void>;
 }) => {
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -72,15 +74,34 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
     setPage(1);
   };
 
+  const handleDeleteTable = async () => {
+    const ok = window.confirm(`Delete table "${table.name}" and all its rows and attachments?`);
+    if (!ok) return;
+    await onDeleteTable(table.id);
+  };
+
+  const handleDeleteRow = async (row: Row) => {
+    const ok = window.confirm("Delete this row?");
+    if (!ok) return;
+    await onDeleteRow(row.id);
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: "#f5f2ee", fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ background: "#faf8f5", borderBottom: "1px solid #ede9e3", padding: "10px 16px" }}>
-        <button onClick={onBack}
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8a7d70", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}
-          onMouseEnter={e => e.currentTarget.style.color = table.color}
-          onMouseLeave={e => e.currentTarget.style.color = "#8a7d70"}>
-          <IconChevronLeft size={15} /> Back to tables
-        </button>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <button onClick={onBack}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8a7d70", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}
+            onMouseEnter={e => e.currentTarget.style.color = table.color}
+            onMouseLeave={e => e.currentTarget.style.color = "#8a7d70"}>
+            <IconChevronLeft size={15} /> Back to tables
+          </button>
+          <button
+            onClick={() => { void handleDeleteTable(); }}
+            style={{ fontSize: 12, color: "#b55a5a", background: "none", border: "1px solid #e8c9c9", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
+            Delete table
+          </button>
+        </div>
       </div>
 
       <TableHeader
@@ -100,6 +121,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         sortPropId={sortPropId}
         sortDir={sortDir}
         onEditRow={row => setRowModal({ open: true, row })}
+        onDeleteRow={(row) => { void handleDeleteRow(row); }}
         onViewAttachments={row => setGalleryRow(row)}
         onSort={handleSort}
       />

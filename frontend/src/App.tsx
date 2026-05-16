@@ -15,6 +15,8 @@ import {
   updateRow,
   updateTable,
   deleteProperty,
+  deleteRow,
+  deleteTable,
 } from "./lib/api";
 import type { Property, Table } from "./types";
 
@@ -118,6 +120,18 @@ export default function App() {
     await loadTableProperties(activeTableId);
   };
 
+  const handleDeleteTable = async (tableId: string) => {
+    await deleteTable(tableId);
+    setTables(prev => prev.filter(t => t.id !== tableId));
+    setActiveTableId(current => (current === tableId ? null : current));
+  };
+
+  const handleDeleteRow = async (rowId: string) => {
+    if (!activeTableId) return;
+    await deleteRow(activeTableId, rowId);
+    await loadTableRows(activeTableId);
+  };
+
   const handleUploadAttachment = async (rowId: string, file: File) => {
     const uploaded = await uploadAttachment(rowId, file);
     if (activeTableId) await loadTableRows(activeTableId);
@@ -142,6 +156,8 @@ export default function App() {
         onSaveProperties={handleSaveProperties}
         onUploadAttachment={handleUploadAttachment}
         onDeleteAttachment={handleDeleteAttachment}
+        onDeleteTable={handleDeleteTable}
+        onDeleteRow={handleDeleteRow}
       />
     );
   }
