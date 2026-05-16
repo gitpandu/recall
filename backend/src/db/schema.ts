@@ -23,6 +23,7 @@ export const rows = sqliteTable("rows", {
   tableId:   text("table_id").notNull().references(() => tables.id, { onDelete: "cascade" }),
   values:    text("values").notNull().default("{}"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
 export const attachments = sqliteTable("attachments", {

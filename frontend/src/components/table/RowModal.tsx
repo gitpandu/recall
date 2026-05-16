@@ -5,6 +5,18 @@ import { PropertyTypeBadge } from "../../components/ui/PropertyTypeBadge";
 import { IconX, IconPaperclip } from "../../components/ui/icons";
 import type { Table, Row, Attachment } from "../../types";
 
+const formatTimestamp = (value: string): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString("id-ID", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
 export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDeleteAttachment }: {
   table: Table;
   row: Row | null;
@@ -167,6 +179,16 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
               <div style={{ marginTop: 8, fontSize: 12, color: "#b55a5a" }}>{attachmentError}</div>
             )}
           </div>
+
+          {row && (
+            <div style={{ background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "10px 12px", display: "grid", gap: 6 }}>
+              <div style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600 }}>
+                Metadata
+              </div>
+              <div style={{ fontSize: 12, color: "#6a5d50" }}>Created: {formatTimestamp(row.createdAt)}</div>
+              <div style={{ fontSize: 12, color: "#6a5d50" }}>Updated: {formatTimestamp(row.updatedAt)}</div>
+            </div>
+          )}
         </div>
 
         <button onClick={() => { onSave(values); onClose(); }}

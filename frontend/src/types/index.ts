@@ -27,6 +27,8 @@ export interface Row {
   tableId: string;
   values: Record<string, unknown>;
   attachments: Attachment[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Table {

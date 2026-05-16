@@ -36,7 +36,7 @@ rowsRouter.patch("/:rowId", async (req, res, next) => {
   try {
     const { rowId } = req.params;
     const { values } = req.body;
-    await db.update(rows).set({ values: JSON.stringify(values) }).where(eq(rows.id, rowId));
+    await db.update(rows).set({ values: JSON.stringify(values), updatedAt: new Date() }).where(eq(rows.id, rowId));
     const row = await db.select().from(rows).where(eq(rows.id, rowId)).then(r => r[0]);
     if (!row) return res.status(404).json({ error: "Row not found" });
     const atts = await db.select().from(attachments).where(eq(attachments.rowId, rowId));

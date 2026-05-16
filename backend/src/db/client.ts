@@ -41,7 +41,8 @@ export function migrate() {
       id TEXT PRIMARY KEY,
       table_id TEXT NOT NULL REFERENCES tables(id) ON DELETE CASCADE,
       "values" TEXT NOT NULL DEFAULT '{}',
-      created_at INTEGER NOT NULL DEFAULT (unixepoch())
+      created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+      updated_at INTEGER NOT NULL DEFAULT (unixepoch())
     );
 
     CREATE TABLE IF NOT EXISTS attachments (

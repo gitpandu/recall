@@ -6,7 +6,8 @@ export const useRows = (table: Table, onUpdateTable: (t: Table) => void) => {
   const rows = table.rows ?? [];
 
   const addRow = useCallback((values: Record<string, unknown>, attachments: Attachment[]) => {
-    const newRow: Row = { id: generateId(), tableId: table.id, values, attachments };
+    const now = new Date().toISOString();
+    const newRow: Row = { id: generateId(), tableId: table.id, values, attachments, createdAt: now, updatedAt: now };
     const updated = [...rows, newRow];
     onUpdateTable({ ...table, rows: updated, rowCount: updated.length });
   }, [table, rows, onUpdateTable]);
