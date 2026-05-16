@@ -2,6 +2,7 @@
 import { TableHeader } from "./TableHeader";
 import { TableGrid } from "./TableGrid";
 import { RowModal } from "./RowModal";
+import { EditTableModal } from "./EditTableModal";
 import { ManagePropertiesModal } from "./ManagePropertiesModal";
 import { AttachmentGallery } from "./AttachmentGallery";
 import { IconChevronLeft, IconPlus } from "../../components/ui/icons";
@@ -59,6 +60,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
   const [rowModal, setRowModal] = useState<{ open: boolean; row: Row | null }>({ open: false, row: null });
+  const [showEditTable, setShowEditTable] = useState(false);
   const [showManageProps, setShowManageProps] = useState(false);
   const [galleryRow, setGalleryRow] = useState<Row | null>(null);
 
@@ -185,9 +187,12 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   };
 
   const handleDeleteTable = async () => {
-    const ok = window.confirm(`Delete table "${table.name}" and all its rows and attachments?`);
-    if (!ok) return;
     await onDeleteTable(table.id);
+  };
+
+  const handleSaveTable = async (nextTable: Table) => {
+    await onUpdateTable(nextTable);
+    setShowEditTable(false);
   };
 
   const handleDeleteRow = async (row: Row) => {
@@ -206,11 +211,13 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
             onMouseLeave={e => e.currentTarget.style.color = "#8a7d70"}>
             <IconChevronLeft size={15} /> Back to tables
           </button>
-          <button
-            onClick={() => { void handleDeleteTable(); }}
-            style={{ fontSize: 12, color: "#b55a5a", background: "none", border: "1px solid #e8c9c9", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
-            Delete table
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button
+              onClick={() => setShowEditTable(true)}
+              style={{ fontSize: 12, color: "#6a5d50", background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
+              Edit table
+            </button>
+          </div>
         </div>
       </div>
 
@@ -220,7 +227,6 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         searchOpen={searchOpen}
         filtersOpen={filtersOpen}
         activeFilterCount={activeFilters.length}
-        onUpdateTable={onUpdateTable}
         onSearchChange={setSearch}
         onToggleSearch={handleToggleSearch}
         onToggleFilters={() => setFiltersOpen(o => !o)}
@@ -363,6 +369,14 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
           onSave={handleSaveRow}
           onUploadAttachment={onUploadAttachment}
           onDeleteAttachment={onDeleteAttachment}
+        />
+      )}
+      {showEditTable && (
+        <EditTableModal
+          table={table}
+          onClose={() => setShowEditTable(false)}
+          onSave={handleSaveTable}
+          onDelete={handleDeleteTable}
         />
       )}
       {showManageProps && (

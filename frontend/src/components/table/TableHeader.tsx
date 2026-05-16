@@ -1,17 +1,15 @@
-﻿import { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { ColorDot } from "../../components/ui/ColorDot";
 import { IconButton } from "../../components/ui/IconButton";
-import { InlineEdit } from "../../components/ui/InlineEdit";
 import { IconSearch, IconSliders, IconFilter, IconX } from "../../components/ui/icons";
 import type { Table } from "../../types";
 
-export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilterCount, onUpdateTable, onSearchChange, onToggleSearch, onToggleFilters, onManageProps }: {
+export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilterCount, onSearchChange, onToggleSearch, onToggleFilters, onManageProps }: {
   table: Table;
   search: string;
   searchOpen: boolean;
   filtersOpen: boolean;
   activeFilterCount: number;
-  onUpdateTable: (t: Table) => void;
   onSearchChange: (v: string) => void;
   onToggleSearch: () => void;
   onToggleFilters: () => void;
@@ -27,12 +25,10 @@ export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilt
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <ColorDot color={table.color} size={9} />
-              <InlineEdit value={table.name} onChange={name => onUpdateTable({ ...table, name })} placeholder="Table name"
-                style={{ fontSize: 15, fontWeight: 700, color: "#2d2520" }} />
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#2d2520" }}>{table.name}</span>
             </div>
             <div style={{ marginLeft: 17 }}>
-              <InlineEdit value={table.description} onChange={description => onUpdateTable({ ...table, description })} placeholder="Add a description..."
-                style={{ fontSize: 12, color: "#a09080" }} multiline />
+              <span style={{ fontSize: 12, color: "#a09080" }}>{table.description || "Add a description..."}</span>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginTop: 2 }}>
