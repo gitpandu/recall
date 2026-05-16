@@ -34,7 +34,7 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
                 </span>
               </th>
             ))}
-            <th style={{ padding: "10px 16px", minWidth: 60, fontSize: 11, color: "#b0a898", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>Files</th>
+            <th style={{ padding: "10px 16px", minWidth: 60, width: 60, fontSize: 11, color: "#b0a898", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, textAlign: "center", verticalAlign: "middle" }}>Files</th>
             <th style={{ padding: "10px 16px", minWidth: 90 }} />
           </tr>
         </thead>
@@ -53,10 +53,10 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
                   <CellValue value={row.values[prop.id]} prop={prop} />
                 </td>
               ))}
-              <td style={{ padding: "10px 16px", verticalAlign: "top" }}>
+              <td style={{ padding: "10px 16px", verticalAlign: "middle", textAlign: "center" }}>
                 {row.attachments.length > 0 && (
                   <button onClick={() => onViewAttachments(row)}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 3, background: "none", border: "none", cursor: "pointer", color: "#8a7d70", padding: 0 }}
+                    style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 3, background: "none", border: "none", cursor: "pointer", color: "#8a7d70", padding: 0, lineHeight: 1 }}
                     onMouseEnter={e => e.currentTarget.style.color = table.color}
                     onMouseLeave={e => e.currentTarget.style.color = "#8a7d70"}>
                     <IconPaperclip size={13} />
