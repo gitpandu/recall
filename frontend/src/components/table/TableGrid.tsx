@@ -6,14 +6,13 @@ import type { Table, Row, PropertyType } from "../../types";
 const colMinWidth = (type: PropertyType): number =>
   type === "longtext" ? 200 : type === "checkbox" ? 70 : type === "date" ? 110 : type === "currency_idr" ? 150 : 120;
 
-export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRow, onDeleteRow, onViewAttachments, onSort, highlightedRowId }: {
+export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRow, onViewAttachments, onSort, highlightedRowId }: {
   table: Table;
   filtered: Row[];
   page: number;
   sortPropId: string | null;
   sortDir: "asc" | "desc";
   onEditRow: (row: Row) => void;
-  onDeleteRow: (row: Row) => void;
   onViewAttachments: (row: Row) => void;
   onSort: (propId: string) => void;
   highlightedRowId?: string | null;
@@ -36,7 +35,7 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
               </th>
             ))}
             <th style={{ padding: "10px 16px", minWidth: 60, width: 60, fontSize: 11, color: "#b0a898", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, textAlign: "center", verticalAlign: "middle" }}>Files</th>
-            <th style={{ padding: "10px 16px", minWidth: 90 }} />
+            <th style={{ padding: "10px 16px", minWidth: 50 }} />
           </tr>
         </thead>
         <tbody>
@@ -70,20 +69,12 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
                 )}
               </td>
               <td style={{ padding: "10px 16px", verticalAlign: "top" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <button onClick={() => onEditRow(row)}
-                    style={{ fontSize: 12, color: "#b0a898", background: "none", border: "none", cursor: "pointer" }}
-                    onMouseEnter={e => e.currentTarget.style.color = table.color}
-                    onMouseLeave={e => e.currentTarget.style.color = "#b0a898"}>
-                    Edit
-                  </button>
-                  <button onClick={() => onDeleteRow(row)}
-                    style={{ fontSize: 12, color: "#d38c8c", background: "none", border: "none", cursor: "pointer" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#b55a5a"}
-                    onMouseLeave={e => e.currentTarget.style.color = "#d38c8c"}>
-                    Delete
-                  </button>
-                </div>
+                <button onClick={() => onEditRow(row)}
+                  style={{ fontSize: 12, color: "#b0a898", background: "none", border: "none", cursor: "pointer" }}
+                  onMouseEnter={e => e.currentTarget.style.color = table.color}
+                  onMouseLeave={e => e.currentTarget.style.color = "#b0a898"}>
+                  Edit
+                </button>
               </td>
             </tr>
           ))}

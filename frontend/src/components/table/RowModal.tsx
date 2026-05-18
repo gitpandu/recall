@@ -17,13 +17,14 @@ const formatTimestamp = (value: string): string => {
   });
 };
 
-export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDeleteAttachment }: {
+export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDeleteAttachment, onDeleteRow }: {
   table: Table;
   row: Row | null;
   onClose: () => void;
   onSave: (values: Record<string, unknown>) => void;
   onUploadAttachment: (rowId: string, file: File) => Promise<Attachment>;
   onDeleteAttachment: (rowId: string, attachmentId: string) => Promise<void>;
+  onDeleteRow?: () => void;
 }) => {
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const init: Record<string, unknown> = {};
@@ -191,6 +192,13 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
           style={{ width: "100%", marginTop: 20, background: table.color, color: "#fff", border: "none", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
           Save
         </button>
+
+        {row && onDeleteRow && (
+          <button onClick={onDeleteRow}
+            style={{ width: "100%", marginTop: 10, background: "#fff", color: "#b55a5a", border: "1px solid #e8c9c9", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+            Delete Row
+          </button>
+        )}
       </div>
     </Modal>
   );

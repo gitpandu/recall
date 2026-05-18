@@ -268,6 +268,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
     const ok = window.confirm("Delete this row?");
     if (!ok) return;
     await onDeleteRow(row.id);
+    setRowModal({ open: false, row: null });
   };
 
   return (
@@ -421,7 +422,6 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         sortPropId={sortPropId}
         sortDir={sortDir}
         onEditRow={row => setRowModal({ open: true, row })}
-        onDeleteRow={(row) => { void handleDeleteRow(row); }}
         onViewAttachments={row => setGalleryRow(row)}
         onSort={handleSort}
         highlightedRowId={highlightedRowId}
@@ -443,6 +443,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
           onSave={handleSaveRow}
           onUploadAttachment={onUploadAttachment}
           onDeleteAttachment={onDeleteAttachment}
+          onDeleteRow={rowModal.row ? () => { void handleDeleteRow(rowModal.row!); } : undefined}
         />
       )}
       {showEditTable && (
