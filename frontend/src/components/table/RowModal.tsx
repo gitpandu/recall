@@ -56,6 +56,10 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
 
   const handleDeleteAttachment = async (attachmentId: string) => {
     if (!row) return;
+    const attachment = attachments.find(x => x.id === attachmentId);
+    const name = attachment ? attachment.name : "this attachment";
+    const ok = window.confirm(`Delete attachment "${name}"?`);
+    if (!ok) return;
     try {
       setAttachmentError(null);
       await onDeleteAttachment(row.id, attachmentId);
