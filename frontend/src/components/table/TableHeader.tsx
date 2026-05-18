@@ -66,7 +66,7 @@ export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilt
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <ColorDot color={table.color} size={12} />
-              <h1 style={{ fontSize: 24, fontFamily: "'Playfair Display', serif", fontWeight: 700, color: "#2d2520", margin: 0 }}>{table.name}</h1>
+              <h1 style={{ fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>{table.name}</h1>
             </div>
             {table.description && (
               <div style={{ marginLeft: 22, marginTop: 4 }}>
