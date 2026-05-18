@@ -41,11 +41,14 @@ export const EditTableModal = ({ table, onClose, onSave, onDelete }: {
 
   return (
     <Modal onClose={onClose}>
-      <div style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#2d2520" }}>Edit Table</h2>
-          <button onClick={onClose} style={{ color: "#b0a898", background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-            <IconX size={16} />
+      <div style={{ padding: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>Table Settings</h2>
+          <button onClick={onClose} 
+            style={{ color: "#b0a898", background: "#f5f2ee", border: "none", cursor: "pointer", padding: 8, borderRadius: "50%", display: "flex", transition: "all 0.15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#e5dfd7"; e.currentTarget.style.color = "#2d2520"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#f5f2ee"; e.currentTarget.style.color = "#b0a898"; }}>
+            <IconX size={14} />
           </button>
         </div>
 
@@ -59,26 +62,26 @@ export const EditTableModal = ({ table, onClose, onSave, onDelete }: {
           </div>
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 6 }}>Title</label>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Title</label>
           <input
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "9px 12px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box" }}
-            onFocus={e => e.currentTarget.style.borderColor = color}
-            onBlur={e => e.currentTarget.style.borderColor = "#e5dfd7"}
+            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10, padding: "12px 14px", fontSize: 15, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s" }}
+            onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }} 
+            onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }}
           />
         </div>
 
-        <div style={{ marginBottom: 24 }}>
-          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 6 }}>Description</label>
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Description</label>
           <textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "9px 12px", fontSize: 13, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", resize: "none", fontFamily: "inherit" }}
-            onFocus={e => e.currentTarget.style.borderColor = color}
-            onBlur={e => e.currentTarget.style.borderColor = "#e5dfd7"}
+            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10, padding: "12px 14px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", resize: "none", fontFamily: "inherit", transition: "all 0.2s" }}
+            onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }} 
+            onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }}
             placeholder="Add a description..."
           />
         </div>
@@ -86,14 +89,18 @@ export const EditTableModal = ({ table, onClose, onSave, onDelete }: {
         <button
           onClick={() => { void handleSave(); }}
           disabled={saving}
-          style={{ width: "100%", background: color, color: "#fff", border: "none", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: saving ? "default" : "pointer", opacity: saving ? 0.75 : 1 }}
+          style={{ width: "100%", background: color, color: "#fff", border: "none", borderRadius: 12, padding: "14px 20px", fontSize: 15, fontWeight: 700, cursor: saving ? "default" : "pointer", opacity: saving ? 0.75 : 1, boxShadow: `0 4px 12px ${color}40`, transition: "all 0.15s" }}
+          onMouseEnter={e => { if (!saving) { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = `0 6px 16px ${color}55`; } }}
+          onMouseLeave={e => { if (!saving) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 4px 12px ${color}40`; } }}
         >
           {saving ? "Saving..." : "Save changes"}
         </button>
 
         <button
           onClick={() => { void handleDelete(); }}
-          style={{ width: "100%", marginTop: 10, background: "#fff", color: "#b55a5a", border: "1px solid #e8c9c9", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+          style={{ width: "100%", marginTop: 12, background: "#fff", color: "#b55a5a", border: "1.5px solid #e8c9c9", borderRadius: 12, padding: "14px 20px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.background = "#fdf4f4"; e.currentTarget.style.borderColor = "#dfa9a9"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e8c9c9"; }}
         >
           Delete table
         </button>

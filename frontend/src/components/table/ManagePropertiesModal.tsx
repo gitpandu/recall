@@ -31,10 +31,15 @@ export const ManagePropertiesModal = ({ table, onClose, onSave }: {
 
   return (
     <Modal onClose={onClose}>
-      <div style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#2d2520" }}>Manage Properties</h2>
-          <button onClick={onClose} style={{ color: "#b0a898", background: "none", border: "none", cursor: "pointer", padding: 4 }}><IconX size={16} /></button>
+      <div style={{ padding: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>Manage Properties</h2>
+          <button onClick={onClose} 
+            style={{ color: "#b0a898", background: "#f5f2ee", border: "none", cursor: "pointer", padding: 8, borderRadius: "50%", display: "flex", transition: "all 0.15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#e5dfd7"; e.currentTarget.style.color = "#2d2520"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#f5f2ee"; e.currentTarget.style.color = "#b0a898"; }}>
+            <IconX size={14} />
+          </button>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
@@ -94,32 +99,39 @@ export const ManagePropertiesModal = ({ table, onClose, onSave }: {
           ))}
         </div>
 
-        <div style={{ border: "1.5px dashed #d5cdc3", borderRadius: 10, padding: 14, background: "#fdfcfa" }}>
-          <p style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, marginBottom: 10 }}>Add Property</p>
-          <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+        <div style={{ border: "1.5px dashed #d5cdc3", borderRadius: 12, padding: 16, background: "#faf8f5" }}>
+          <p style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, marginBottom: 12 }}>Add Property</p>
+          <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
             <input value={newName} onChange={e => setNewName(e.target.value)} onKeyDown={e => e.key === "Enter" && addProp()} placeholder="Name"
-              style={{ flex: 1, border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "7px 10px", fontSize: 13, color: "#2d2520", outline: "none", background: "#fff" }} />
+              style={{ flex: 1, border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "10px 12px", fontSize: 13, color: "#2d2520", outline: "none", background: "#fff", transition: "all 0.15s" }}
+              onFocus={e => { e.currentTarget.style.borderColor = newColor; e.currentTarget.style.boxShadow = `0 0 0 3px ${newColor}1a`; }} 
+              onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }} />
             <select value={newType} onChange={e => setNewType(e.target.value as PropertyType)}
-              style={{ border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "7px 8px", fontSize: 12, color: "#2d2520", outline: "none", background: "#fff" }}>
+              style={{ border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "10px", fontSize: 13, color: "#2d2520", outline: "none", background: "#fff" }}>
               {PROPERTY_TYPES.map(t => <option key={t} value={t}>{PROPERTY_TYPE_LABELS[t]}</option>)}
             </select>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 11, color: "#b0a898" }}>Color</span>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 11, color: "#b0a898", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Color</span>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: 4 }}>
               {TABLE_COLORS.map(c => (
                 <button key={c} onClick={() => setNewColor(c)}
-                  style={{ width: 18, height: 18, borderRadius: "50%", background: c, border: "none", cursor: "pointer", outline: newColor === c ? `2.5px solid ${c}` : "none", outlineOffset: 2 }} />
+                  style={{ width: 22, height: 22, borderRadius: "50%", background: c, border: "none", cursor: "pointer", outline: newColor === c ? `3px solid ${c}` : "none", outlineOffset: 2 }} />
               ))}
             </div>
           </div>
-          <button onClick={addProp} style={{ width: "100%", background: "#2d2520", color: "#fff", border: "none", borderRadius: 8, padding: 9, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+          <button onClick={addProp} 
+            style={{ width: "100%", background: "#2d2520", color: "#fff", border: "none", borderRadius: 8, padding: "10px 12px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "background 0.15s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "#1a1512"}
+            onMouseLeave={e => e.currentTarget.style.background = "#2d2520"}>
             + Add Property
           </button>
         </div>
 
         <button onClick={() => { onSave(properties); onClose(); }}
-          style={{ width: "100%", marginTop: 14, background: table.color, color: "#fff", border: "none", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+          style={{ width: "100%", marginTop: 24, background: table.color, color: "#fff", border: "none", borderRadius: 12, padding: "14px 20px", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: `0 4px 12px ${table.color}40`, transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = `0 6px 16px ${table.color}55`; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 4px 12px ${table.color}40`; }}>
           Save Changes
         </button>
       </div>

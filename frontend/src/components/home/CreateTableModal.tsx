@@ -23,10 +23,15 @@ export const CreateTableModal = ({ onClose, onCreate }: {
 
   return (
     <Modal onClose={onClose}>
-      <div style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#2d2520" }}>New Table</h2>
-          <button onClick={onClose} style={{ color: "#b0a898", background: "none", border: "none", cursor: "pointer", padding: 4 }}><IconX size={16} /></button>
+      <div style={{ padding: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>New Table</h2>
+          <button onClick={onClose} 
+            style={{ color: "#b0a898", background: "#f5f2ee", border: "none", cursor: "pointer", padding: 8, borderRadius: "50%", display: "flex", transition: "all 0.15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#e5dfd7"; e.currentTarget.style.color = "#2d2520"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#f5f2ee"; e.currentTarget.style.color = "#b0a898"; }}>
+            <IconX size={14} />
+          </button>
         </div>
 
         <div style={{ marginBottom: 16 }}>
@@ -39,21 +44,24 @@ export const CreateTableModal = ({ onClose, onCreate }: {
           </div>
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 6 }}>Name</label>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Name</label>
           <input value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === "Enter" && handleCreate()} placeholder="e.g. Purchases" autoFocus
-            style={{ width: "100%", border: `1.5px solid ${color}`, borderRadius: 8, padding: "9px 12px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box" }} />
+            style={{ width: "100%", border: `1.5px solid ${color}`, borderRadius: 10, padding: "12px 14px", fontSize: 15, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s", boxShadow: `0 0 0 3px ${color}1a` }} />
         </div>
 
-        <div style={{ marginBottom: 24 }}>
-          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 6 }}>Description</label>
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Description</label>
           <input value={description} onChange={e => setDescription(e.target.value)} placeholder="Short description…"
-            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 8, padding: "9px 12px", fontSize: 13, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box" }}
-            onFocus={e => e.currentTarget.style.borderColor = color} onBlur={e => e.currentTarget.style.borderColor = "#e5dfd7"} />
+            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10, padding: "12px 14px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s" }}
+            onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }} 
+            onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }} />
         </div>
 
         <button onClick={handleCreate}
-          style={{ width: "100%", background: color, color: "#fff", border: "none", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+          style={{ width: "100%", background: color, color: "#fff", border: "none", borderRadius: 12, padding: "14px 20px", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: `0 4px 12px ${color}40`, transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = `0 6px 16px ${color}55`; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 4px 12px ${color}40`; }}>
           Create Table
         </button>
       </div>

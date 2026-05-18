@@ -70,23 +70,28 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
   };
 
   const inputSt = (): React.CSSProperties => ({
-    width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 8,
-    padding: "8px 12px", fontSize: 13, color: "#2d2520", outline: "none",
-    background: "#fff", fontFamily: "inherit",
+    width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10,
+    padding: "10px 14px", fontSize: 14, color: "#2d2520", outline: "none",
+    background: "#fff", fontFamily: "inherit", transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
   });
 
   return (
     <Modal onClose={onClose}>
-      <div style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <ColorDot color={table.color} size={10} />
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#2d2520" }}>{row ? "Edit Row" : "New Row"}</h2>
+      <div style={{ padding: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <ColorDot color={table.color} size={14} />
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>{row ? "Edit Row" : "New Row"}</h2>
           </div>
-          <button onClick={onClose} style={{ color: "#b0a898", background: "none", border: "none", cursor: "pointer", padding: 4 }}><IconX size={16} /></button>
+          <button onClick={onClose} 
+            style={{ color: "#b0a898", background: "#f5f2ee", border: "none", cursor: "pointer", padding: 8, borderRadius: "50%", display: "flex", transition: "all 0.15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#e5dfd7"; e.currentTarget.style.color = "#2d2520"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#f5f2ee"; e.currentTarget.style.color = "#b0a898"; }}>
+            <IconX size={14} />
+          </button>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {table.properties.map(prop => (
             <div key={prop.id}>
               <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600 }}>
@@ -121,8 +126,8 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
               )}
               {prop.type === "checkbox" && (
                 <button onClick={() => set(prop.id, !values[prop.id])}
-                  style={{ width: 44, height: 26, borderRadius: 13, border: "none", cursor: "pointer", background: values[prop.id] ? prop.color : "#e5dfd7", transition: "background 0.2s", position: "relative" }}>
-                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", position: "absolute", top: 4, transition: "left 0.2s", left: values[prop.id] ? 22 : 4, boxShadow: "0 1px 3px rgba(0,0,0,0.15)" }} />
+                  style={{ width: 48, height: 28, borderRadius: 14, border: "none", cursor: "pointer", background: values[prop.id] ? prop.color : "#e5dfd7", transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)", position: "relative", boxShadow: values[prop.id] ? `0 2px 8px ${prop.color}40` : "none" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#fff", position: "absolute", top: 4, transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)", left: values[prop.id] ? 24 : 4, boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }} />
                 </button>
               )}
               {prop.type === "select" && (
@@ -193,13 +198,17 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
         </div>
 
         <button onClick={() => { onSave(values); onClose(); }}
-          style={{ width: "100%", marginTop: 20, background: table.color, color: "#fff", border: "none", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-          Save
+          style={{ width: "100%", marginTop: 28, background: table.color, color: "#fff", border: "none", borderRadius: 12, padding: "14px 20px", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: `0 4px 12px ${table.color}40`, transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = `0 6px 16px ${table.color}55`; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 4px 12px ${table.color}40`; }}>
+          Save Row
         </button>
 
         {row && onDeleteRow && (
           <button onClick={onDeleteRow}
-            style={{ width: "100%", marginTop: 10, background: "#fff", color: "#b55a5a", border: "1px solid #e8c9c9", borderRadius: 10, padding: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+            style={{ width: "100%", marginTop: 12, background: "#fff", color: "#b55a5a", border: "1.5px solid #e8c9c9", borderRadius: 12, padding: "14px 20px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all 0.15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#fdf4f4"; e.currentTarget.style.borderColor = "#dfa9a9"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e8c9c9"; }}>
             Delete Row
           </button>
         )}
