@@ -272,24 +272,24 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f2ee", fontFamily: "'DM Sans', sans-serif" }}>
-      <div style={{ background: "#faf8f5", borderBottom: "1px solid #ede9e3", padding: "10px 16px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-          <button onClick={onBack}
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8a7d70", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}
-            onMouseEnter={e => e.currentTarget.style.color = table.color}
-            onMouseLeave={e => e.currentTarget.style.color = "#8a7d70"}>
-            <IconChevronLeft size={15} /> Back to tables
-          </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button
-              onClick={() => setShowEditTable(true)}
-              style={{ fontSize: 12, color: "#6a5d50", background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
-              Edit table
-            </button>
-          </div>
-        </div>
+    <div style={{ minHeight: "100vh", background: "#f5f2ee", fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
+      <div style={{ background: "#fff", borderBottom: "1px solid #e5dfd7", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <button onClick={onBack}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8a7d70", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: "6px 12px", marginLeft: -12, borderRadius: 8, transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.color = table.color; e.currentTarget.style.background = `${table.color}11`; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "#8a7d70"; e.currentTarget.style.background = "transparent"; }}>
+          <IconChevronLeft size={15} /> Back
+        </button>
+        <button
+          onClick={() => setShowEditTable(true)}
+          style={{ fontSize: 13, fontWeight: 600, color: "#6a5d50", background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "6px 12px", cursor: "pointer", transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#c8bfb0"; e.currentTarget.style.background = "#faf8f5"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.background = "#fff"; }}>
+          Table Settings
+        </button>
       </div>
+      <div style={{ flex: 1, padding: "24px", maxWidth: 1400, margin: "0 auto", width: "100%", boxSizing: "border-box" }}>
+        <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5dfd7", boxShadow: "0 4px 12px rgba(60, 45, 30, 0.03), 0 1px 3px rgba(60, 45, 30, 0.02)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
       <TableHeader
         table={table}
@@ -404,28 +404,34 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         </div>
       )}
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid #e5dfd7", background: "#faf8f5" }}>
-        <span style={{ fontSize: 12, color: "#b0a898" }}>{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 24px", borderBottom: "1px solid #e5dfd7", background: "#fff" }}>
+        <span style={{ fontSize: 13, color: "#8a7d70", fontWeight: 500 }}>{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === 1 ? "default" : "pointer", opacity: page === 1 ? 0.4 : 1 }}>←</button>
-          <span style={{ fontSize: 12, color: "#8a7d70" }}>{page} / {totalPages}</span>
+            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === 1 ? "default" : "pointer", opacity: page === 1 ? 0.4 : 1, transition: "background 0.15s" }}
+            onMouseEnter={e => { if (page !== 1) e.currentTarget.style.background = "#faf8f5"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#fff"; }}>←</button>
+          <span style={{ fontSize: 12, color: "#8a7d70", fontWeight: 600, minWidth: 40, textAlign: "center" }}>{page} / {totalPages}</span>
           <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === totalPages ? "default" : "pointer", opacity: page === totalPages ? 0.4 : 1 }}>→</button>
+            style={{ fontSize: 13, padding: "5px 11px", borderRadius: 6, border: "1px solid #e5dfd7", background: "#fff", color: "#6a5d50", cursor: page === totalPages ? "default" : "pointer", opacity: page === totalPages ? 0.4 : 1, transition: "background 0.15s" }}
+            onMouseEnter={e => { if (page !== totalPages) e.currentTarget.style.background = "#faf8f5"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#fff"; }}>→</button>
         </div>
       </div>
 
-      <TableGrid
-        table={table}
-        filtered={filtered}
-        page={page}
-        sortPropId={sortPropId}
-        sortDir={sortDir}
-        onEditRow={row => setRowModal({ open: true, row })}
-        onViewAttachments={row => setGalleryRow(row)}
-        onSort={handleSort}
-        highlightedRowId={highlightedRowId}
-      />
+        <TableGrid
+          table={table}
+          filtered={filtered}
+          page={page}
+          sortPropId={sortPropId}
+          sortDir={sortDir}
+          onEditRow={row => setRowModal({ open: true, row })}
+          onViewAttachments={row => setGalleryRow(row)}
+          onSort={handleSort}
+          highlightedRowId={highlightedRowId}
+        />
+        </div>
+      </div>
 
       <button onClick={() => setRowModal({ open: true, row: null })}
         style={{ position: "fixed", bottom: 28, right: 24, zIndex: 40, display: "inline-flex", alignItems: "center", gap: 8, borderRadius: 999, background: table.color, border: "none", cursor: "pointer", padding: "14px 18px", boxShadow: `0 4px 20px ${table.color}55`, transition: "transform 0.15s, box-shadow 0.15s" }}

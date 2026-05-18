@@ -23,17 +23,19 @@ export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilt
   useEffect(() => { if (searchOpen) searchRef.current?.focus(); }, [searchOpen]);
 
   return (
-    <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#faf8f5", borderBottom: "1px solid #e5dfd7" }}>
-      <div style={{ padding: "12px 16px" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+    <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#fff", borderBottom: "1px solid #e5dfd7", borderRadius: "12px 12px 0 0" }}>
+      <div style={{ padding: "20px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <ColorDot color={table.color} size={9} />
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#2d2520" }}>{table.name}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <ColorDot color={table.color} size={12} />
+              <h1 style={{ fontSize: 24, fontFamily: "'Playfair Display', serif", fontWeight: 700, color: "#2d2520", margin: 0 }}>{table.name}</h1>
             </div>
-            <div style={{ marginLeft: 17 }}>
-              <span style={{ fontSize: 12, color: "#a09080" }}>{table.description || "Add a description..."}</span>
-            </div>
+            {table.description && (
+              <div style={{ marginLeft: 22, marginTop: 4 }}>
+                <span style={{ fontSize: 13, color: "#8a7d70" }}>{table.description}</span>
+              </div>
+            )}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginTop: 2 }}>
             <IconButton onClick={() => { onToggleSearch(); setSortOpen(false); }} active={searchOpen} activeColor={table.color} title="Search">
