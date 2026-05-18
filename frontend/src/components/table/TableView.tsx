@@ -273,7 +273,14 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f2ee", fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
-      <div style={{ background: "#fff", borderBottom: "1px solid #e5dfd7", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div className="table-top-bar desktop-only-topbar" style={{ background: "#fff", borderBottom: "1px solid #e5dfd7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <style>{`
+          .table-top-bar { padding: 12px 24px; }
+          @media (max-width: 768px) {
+            .table-top-bar { padding: 12px 16px; }
+            .desktop-only-topbar { display: none !important; }
+          }
+        `}</style>
         <button onClick={onBack}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8a7d70", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: "6px 12px", marginLeft: -12, borderRadius: 8, transition: "all 0.15s" }}
           onMouseEnter={e => { e.currentTarget.style.color = table.color; e.currentTarget.style.background = `${table.color}11`; }}
@@ -288,8 +295,43 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
           Table Settings
         </button>
       </div>
-      <div style={{ flex: 1, padding: "24px", maxWidth: 1400, margin: "0 auto", width: "100%", boxSizing: "border-box" }}>
-        <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5dfd7", boxShadow: "0 4px 12px rgba(60, 45, 30, 0.03), 0 1px 3px rgba(60, 45, 30, 0.02)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <style>{`
+        .table-view-container {
+          padding: 24px;
+          max-width: 1400px;
+          margin: 0 auto;
+          width: 100%;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+        }
+        .table-view-card {
+          background: #fff;
+          border-radius: 12px;
+          border: 1px solid #e5dfd7;
+          box-shadow: 0 4px 12px rgba(60, 45, 30, 0.03), 0 1px 3px rgba(60, 45, 30, 0.02);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        @media (max-width: 768px) {
+          .table-view-container {
+            padding: 0;
+            flex: 1;
+          }
+          .table-view-card {
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+            box-shadow: none;
+            flex: 1;
+          }
+        }
+      `}</style>
+      <div className="table-view-container" style={{ flex: 1 }}>
+        <div className="table-view-card">
 
       <TableHeader
         table={table}
@@ -304,6 +346,8 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         onToggleFilters={() => setFiltersOpen(o => !o)}
         onManageProps={() => setShowManageProps(true)}
         onSort={handleSort}
+        onBack={onBack}
+        onShowSettings={() => setShowEditTable(true)}
       />
 
       {filtersOpen && (
@@ -404,7 +448,13 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         </div>
       )}
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 24px", borderBottom: "1px solid #e5dfd7", background: "#fff" }}>
+      <div className="table-pagination-bar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #e5dfd7", background: "#fff" }}>
+        <style>{`
+          .table-pagination-bar { padding: 14px 24px; }
+          @media (max-width: 768px) {
+            .table-pagination-bar { padding: 12px 16px; }
+          }
+        `}</style>
         <span style={{ fontSize: 13, color: "#8a7d70", fontWeight: 500 }}>{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}

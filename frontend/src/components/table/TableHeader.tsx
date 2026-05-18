@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import { ColorDot } from "../../components/ui/ColorDot";
 import { IconButton } from "../../components/ui/IconButton";
-import { IconSearch, IconSliders, IconFilter, IconX, IconSort } from "../../components/ui/icons";
+import { IconSearch, IconSliders, IconFilter, IconX, IconSort, IconSettings, IconChevronLeft } from "../../components/ui/icons";
 import type { Table } from "../../types";
 
-export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilterCount, sortPropId, sortDir, onSearchChange, onToggleSearch, onToggleFilters, onManageProps, onSort }: {
+export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilterCount, sortPropId, sortDir, onSearchChange, onToggleSearch, onToggleFilters, onManageProps, onSort, onBack, onShowSettings }: {
   table: Table;
   search: string;
   searchOpen: boolean;
@@ -17,14 +17,51 @@ export const TableHeader = ({ table, search, searchOpen, filtersOpen, activeFilt
   onToggleFilters: () => void;
   onManageProps: () => void;
   onSort: (propId: string | null, dir?: "asc" | "desc") => void;
+  onBack?: () => void;
+  onShowSettings?: () => void;
 }) => {
   const [sortOpen, setSortOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => { if (searchOpen) searchRef.current?.focus(); }, [searchOpen]);
 
   return (
-    <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#fff", borderBottom: "1px solid #e5dfd7", borderRadius: "12px 12px 0 0" }}>
-      <div style={{ padding: "20px 24px" }}>
+    <div className="table-header-wrapper" style={{ position: "sticky", top: 0, zIndex: 10, background: "#fff", borderBottom: "1px solid #e5dfd7" }}>
+      <style>{`
+        .table-header-wrapper { border-radius: 12px 12px 0 0; }
+        .table-header-inner { padding: 20px 24px; }
+        .mobile-header-actions { display: none; }
+        @media (max-width: 768px) {
+          .table-header-wrapper { border-radius: 0; }
+          .table-header-inner { padding: 16px; }
+          .mobile-header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0ebe4;
+            padding-bottom: 8px;
+          }
+        }
+      `}</style>
+      <div className="table-header-inner">
+        {/* Mobile-only header actions */}
+        {(onBack || onShowSettings) && (
+          <div className="mobile-header-actions">
+            {onBack ? (
+              <button onClick={onBack}
+                style={{ display: "inline-flex", alignItems: "center", gap: 4, color: "#8a7d70", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: "6px 0" }}>
+                <IconChevronLeft size={16} /> Back
+              </button>
+            ) : <div />}
+            {onShowSettings ? (
+              <button onClick={onShowSettings}
+                style={{ display: "inline-flex", alignItems: "center", gap: 4, color: "#6a5d50", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: "6px 0" }}>
+                <IconSettings size={15} /> Settings
+              </button>
+            ) : null}
+          </div>
+        )}
+
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

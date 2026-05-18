@@ -20,7 +20,13 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div style={{ overflowX: "auto", background: "#fff", borderRadius: "0 0 12px 12px" }}>
+    <div className="table-grid-wrapper" style={{ overflowX: "auto", background: "#fff" }}>
+      <style>{`
+        .table-grid-wrapper { border-radius: 0 0 12px 12px; }
+        @media (max-width: 768px) {
+          .table-grid-wrapper { border-radius: 0; }
+        }
+      `}</style>
       <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "max-content" }}>
         <thead>
           <tr style={{ borderBottom: "2px solid #e5dfd7", background: "#faf8f5" }}>
