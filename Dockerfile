@@ -10,6 +10,7 @@ RUN npm run build
 FROM node:20-slim
 WORKDIR /app
 COPY backend/package*.json ./backend/
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 RUN npm install --prefix backend
 COPY backend/ ./backend/
 COPY --from=frontend-build /app/frontend/dist ./frontend/dist
