@@ -155,12 +155,14 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
         {filtered.map(table => (
           <TableCard key={table.id} table={table} onClick={() => onSelectTable(table)} onTogglePin={onTogglePin} />
         ))}
-        <button onClick={onCreateTable}
-          style={{ width: "100%", height: "100%", minHeight: 120, border: "2px dashed #d5cdc3", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "transparent", transition: "all 0.2s ease" }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "#c0764a"; e.currentTarget.style.background = "#faf8f5"; }} onMouseLeave={e => { e.currentTarget.style.borderColor = "#d5cdc3"; e.currentTarget.style.background = "transparent"; }}>
-          <div style={{ fontSize: 24, color: "#c0764a", marginBottom: 8, fontWeight: 300 }}>+</div>
-          <div style={{ fontSize: 14, color: "#8a7d70", fontWeight: 500 }}>Create new table</div>
-        </button>
+        {!(search.trim() && filtered.length === 0) && (
+          <button onClick={onCreateTable}
+            style={{ width: "100%", height: "100%", minHeight: 120, border: "2px dashed #d5cdc3", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "transparent", transition: "all 0.2s ease" }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "#c0764a"; e.currentTarget.style.background = "#faf8f5"; }} onMouseLeave={e => { e.currentTarget.style.borderColor = "#d5cdc3"; e.currentTarget.style.background = "transparent"; }}>
+            <div style={{ fontSize: 24, color: "#c0764a", marginBottom: 8, fontWeight: 300 }}>+</div>
+            <div style={{ fontSize: 14, color: "#8a7d70", fontWeight: 500 }}>Create new table</div>
+          </button>
+        )}
       </div>
       </div>
     </div>
