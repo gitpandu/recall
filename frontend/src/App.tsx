@@ -151,6 +151,7 @@ export default function App() {
   if (activeTable) {
     return (
       <TableView
+        key={activeTable.id}
         table={activeTable}
         onBack={() => setActiveTableId(null)}
         onUpdateTable={handleUpdateTable}

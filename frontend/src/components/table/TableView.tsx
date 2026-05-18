@@ -56,8 +56,20 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   const [searchOpen, setSearchOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<FilterCondition[]>([]);
-  const [sortPropId, setSortPropId] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [sortPropId, setSortPropId] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(`sortPropId_${table.id}`) ?? null;
+    } catch {
+      return null;
+    }
+  });
+  const [sortDir, setSortDir] = useState<"asc" | "desc">(() => {
+    try {
+      return (localStorage.getItem(`sortDir_${table.id}`) as "asc" | "desc") ?? "asc";
+    } catch {
+      return "asc";
+    }
+  });
   const [page, setPage] = useState(1);
   const [rowModal, setRowModal] = useState<{ open: boolean; row: Row | null }>({ open: false, row: null });
   const [showEditTable, setShowEditTable] = useState(false);
@@ -82,7 +94,14 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
 
   useEffect(() => {
     setFilters(prev => prev.filter(f => propertiesById.has(f.propertyId)));
-  }, [propertiesById]);
+    if (sortPropId && !propertiesById.has(sortPropId)) {
+      setSortPropId(null);
+      try {
+        localStorage.removeItem(`sortPropId_${table.id}`);
+        localStorage.removeItem(`sortDir_${table.id}`);
+      } catch {}
+    }
+  }, [propertiesById, sortPropId, table.id]);
 
   useEffect(() => {
     setPage(1);
@@ -174,9 +193,30 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
 
-  const handleSort = (id: string) => {
-    if (sortPropId === id) setSortDir(d => d === "asc" ? "desc" : "asc");
-    else { setSortPropId(id); setSortDir("asc"); }
+  const handleSort = (propId: string | null, dir?: "asc" | "desc") => {
+    if (propId === null) {
+      setSortPropId(null);
+      try {
+        localStorage.removeItem(`sortPropId_${table.id}`);
+        localStorage.removeItem(`sortDir_${table.id}`);
+      } catch {}
+    } else {
+      const nextDir = dir ?? (sortPropId === propId && sortDir === "asc" ? "desc" : "asc");
+      if (!dir && sortPropId === propId && sortDir === "desc") {
+        setSortPropId(null);
+        try {
+          localStorage.removeItem(`sortPropId_${table.id}`);
+          localStorage.removeItem(`sortDir_${table.id}`);
+        } catch {}
+      } else {
+        setSortPropId(propId);
+        setSortDir(nextDir);
+        try {
+          localStorage.setItem(`sortPropId_${table.id}`, propId);
+          localStorage.setItem(`sortDir_${table.id}`, nextDir);
+        } catch {}
+      }
+    }
     setPage(1);
   };
 
@@ -256,10 +296,13 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         searchOpen={searchOpen}
         filtersOpen={filtersOpen}
         activeFilterCount={activeFilters.length}
+        sortPropId={sortPropId}
+        sortDir={sortDir}
         onSearchChange={setSearch}
         onToggleSearch={handleToggleSearch}
         onToggleFilters={() => setFiltersOpen(o => !o)}
         onManageProps={() => setShowManageProps(true)}
+        onSort={handleSort}
       />
 
       {filtersOpen && (
