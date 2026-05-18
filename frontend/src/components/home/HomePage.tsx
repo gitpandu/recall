@@ -147,9 +147,9 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
       )}
 
       <div style={{ padding: "16px 20px 32px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
-        {filtered.length === 0 && (
+        {filtered.length === 0 && search.trim() && (
           <div style={{ gridColumn: "1 / -1", padding: "60px 0", textAlign: "center", color: "#b0a898", fontSize: 14 }}>
-            {search.trim() ? "No tables match your search" : "No tables yet. Create your first table."}
+            No tables match your search
           </div>
         )}
         {filtered.map(table => (
