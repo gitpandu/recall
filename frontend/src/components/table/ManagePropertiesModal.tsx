@@ -39,22 +39,57 @@ export const ManagePropertiesModal = ({ table, onClose, onSave }: {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
           {properties.map((prop, i) => (
-            <div key={prop.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: 10, borderRadius: 8, background: "#fff", border: "1px solid #e5dfd7" }}>
-              <ColorDot color={prop.color} size={9} />
-              <input
-                value={prop.name}
-                onChange={e => setProperties(prev => prev.map(p => p.id === prop.id ? { ...p, name: e.target.value } : p))}
-                style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, color: "#2d2520", outline: "none", fontWeight: 500 }}
-              />
-              <PropertyTypeBadge type={prop.type} />
-              {i > 0
-                ? <button onClick={() => setProperties(prev => prev.filter(p => p.id !== prop.id))}
-                    style={{ color: "#d5cdc3", background: "none", border: "none", cursor: "pointer", padding: 2, display: "flex" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#b55a5a"} onMouseLeave={e => e.currentTarget.style.color = "#d5cdc3"}>
-                    <IconX size={13} />
-                  </button>
-                : <span style={{ width: 17 }} />
-              }
+            <div key={prop.id} style={{ display: "flex", flexDirection: "column", padding: 10, borderRadius: 8, background: "#fff", border: "1px solid #e5dfd7" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <ColorDot color={prop.color} size={9} />
+                <input
+                  value={prop.name}
+                  onChange={e => setProperties(prev => prev.map(p => p.id === prop.id ? { ...p, name: e.target.value } : p))}
+                  style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, color: "#2d2520", outline: "none", fontWeight: 500 }}
+                />
+                <PropertyTypeBadge type={prop.type} />
+                {i > 0
+                  ? <button onClick={() => setProperties(prev => prev.filter(p => p.id !== prop.id))}
+                      style={{ color: "#d5cdc3", background: "none", border: "none", cursor: "pointer", padding: 2, display: "flex" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "#b55a5a"} onMouseLeave={e => e.currentTarget.style.color = "#d5cdc3"}>
+                      <IconX size={13} />
+                    </button>
+                  : <span style={{ width: 17 }} />
+                }
+              </div>
+              {(prop.type === "select" || prop.type === "multiselect") && (
+                <div style={{ paddingLeft: 17, paddingTop: 8, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {prop.options?.map(opt => (
+                    <span key={opt} style={{ fontSize: 11, background: prop.color + "1a", border: `1px solid ${prop.color}40`, color: prop.color, padding: "2px 6px", borderRadius: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 500 }}>
+                      {opt}
+                      <button 
+                        onClick={() => setProperties(prev => prev.map(p => p.id === prop.id ? { ...p, options: p.options?.filter(o => o !== opt) } : p))} 
+                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: prop.color, display: "flex", alignItems: "center", opacity: 0.7 }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = "1"}
+                        onMouseLeave={e => e.currentTarget.style.opacity = "0.7"}
+                      >
+                        <IconX size={10} />
+                      </button>
+                    </span>
+                  ))}
+                  <input 
+                    placeholder="Add option... (Enter)"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                         e.preventDefault();
+                         const val = e.currentTarget.value.trim();
+                         if (val && !prop.options?.includes(val)) {
+                            setProperties(prev => prev.map(p => p.id === prop.id ? { ...p, options: [...(p.options || []), val] } : p));
+                         }
+                         e.currentTarget.value = "";
+                      }
+                    }}
+                    style={{ border: "1px dashed #d5cdc3", borderRadius: 4, padding: "2px 6px", fontSize: 11, outline: "none", minWidth: 120, background: "transparent", color: "#6a5d50" }}
+                    onFocus={e => e.currentTarget.style.borderColor = prop.color}
+                    onBlur={e => e.currentTarget.style.borderColor = "#d5cdc3"}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>

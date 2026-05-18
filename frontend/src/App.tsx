@@ -100,9 +100,17 @@ export default function App() {
   const handleSaveProperties = async (nextProperties: Property[]) => {
     if (!activeTableId || !activeTable) return;
     const existingById = new Map(activeTable.properties.map(p => [p.id, p]));
+    const removedOptions = new Map<string, string[]>();
 
     for (let i = 0; i < nextProperties.length; i += 1) {
       const prop = nextProperties[i];
+      if ((prop.type === "select" || prop.type === "multiselect") && existingById.has(prop.id)) {
+        const oldProp = existingById.get(prop.id)!;
+        const newOptions = new Set(prop.options ?? []);
+        const removed = (oldProp.options ?? []).filter(o => !newOptions.has(o));
+        if (removed.length > 0) removedOptions.set(prop.id, removed);
+      }
+
       const payload = {
         name: prop.name,
         type: prop.type,
@@ -117,6 +125,40 @@ export default function App() {
     const nextIds = new Set(nextProperties.map(p => p.id));
     for (const oldProp of activeTable.properties) {
       if (!nextIds.has(oldProp.id)) await deleteProperty(activeTableId, oldProp.id);
+    }
+
+    if (removedOptions.size > 0 && activeTable.rows) {
+      let rowsUpdated = false;
+      for (const row of activeTable.rows) {
+        let changed = false;
+        const nextValues = { ...row.values };
+        
+        for (const [propId, removedList] of removedOptions.entries()) {
+          const val = nextValues[propId];
+          const propDef = nextProperties.find(p => p.id === propId);
+          if (!propDef) continue;
+          
+          if (propDef.type === "select" && typeof val === "string") {
+            if (removedList.includes(val)) {
+              nextValues[propId] = "";
+              changed = true;
+            }
+          } else if (propDef.type === "multiselect" && Array.isArray(val)) {
+            const current = val as string[];
+            const filtered = current.filter(v => !removedList.includes(v));
+            if (filtered.length !== current.length) {
+              nextValues[propId] = filtered;
+              changed = true;
+            }
+          }
+        }
+        
+        if (changed) {
+          await updateRow(activeTableId, row.id, { values: nextValues });
+          rowsUpdated = true;
+        }
+      }
+      if (rowsUpdated) await loadTableRows(activeTableId);
     }
 
     await loadTableProperties(activeTableId);
