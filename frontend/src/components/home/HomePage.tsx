@@ -57,9 +57,10 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f2ee", fontFamily: "'DM Sans', sans-serif" }}>
-      <div style={{ background: "#faf8f5", borderBottom: "1px solid #e5dfd7", padding: "32px 20px 16px" }}>
-        <p style={{ fontSize: 11, color: "#b0a898", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 600, marginBottom: 4 }}>Personal Logger</p>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
+      <div style={{ background: "#faf8f5", borderBottom: "1px solid #e5dfd7" }}>
+        <div style={{ padding: "32px 20px 16px", maxWidth: 1200, margin: "0 auto" }}>
+          <p style={{ fontSize: 11, color: "#b0a898", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 600, marginBottom: 4 }}>Personal Logger</p>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
           <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, color: "#2d2520", fontWeight: 700, margin: 0 }}>Recall</h1>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <IconButton
@@ -128,9 +129,11 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
             )}
           </div>
         )}
+        </div>
       </div>
 
-      <div style={{ padding: "10px 20px 2px", display: "flex", justifyContent: "space-between" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ padding: "16px 20px 2px", display: "flex", justifyContent: "space-between" }}>
         <span style={{ fontSize: 11, color: "#b0a898" }}>{filtered.length} table{filtered.length !== 1 ? "s" : ""}</span>
         <span style={{ fontSize: 11, color: "#b0a898" }}>{sortLabels[sort]}</span>
       </div>
@@ -143,9 +146,9 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
         </div>
       )}
 
-      <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ padding: "16px 20px 32px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
         {filtered.length === 0 && (
-          <div style={{ padding: "40px 0", textAlign: "center", color: "#b0a898", fontSize: 13 }}>
+          <div style={{ gridColumn: "1 / -1", padding: "60px 0", textAlign: "center", color: "#b0a898", fontSize: 14 }}>
             {search.trim() ? "No tables match your search" : "No tables yet. Create your first table."}
           </div>
         )}
@@ -153,11 +156,12 @@ export const HomePage = ({ tables, onSelectTable, onCreateTable, onTogglePin }: 
           <TableCard key={table.id} table={table} onClick={() => onSelectTable(table)} onTogglePin={onTogglePin} />
         ))}
         <button onClick={onCreateTable}
-          style={{ width: "100%", border: "1.5px dashed #d5cdc3", borderRadius: 12, padding: 20, textAlign: "center", cursor: "pointer", background: "transparent", transition: "border-color 0.15s" }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = "#b0a898"} onMouseLeave={e => e.currentTarget.style.borderColor = "#d5cdc3"}>
-          <div style={{ fontSize: 20, color: "#d5cdc3", marginBottom: 4 }}>+</div>
-          <div style={{ fontSize: 13, color: "#b0a898" }}>Create new table</div>
+          style={{ width: "100%", height: "100%", minHeight: 120, border: "2px dashed #d5cdc3", borderRadius: 12, padding: 20, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "transparent", transition: "all 0.2s ease" }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#c0764a"; e.currentTarget.style.background = "#faf8f5"; }} onMouseLeave={e => { e.currentTarget.style.borderColor = "#d5cdc3"; e.currentTarget.style.background = "transparent"; }}>
+          <div style={{ fontSize: 24, color: "#c0764a", marginBottom: 8, fontWeight: 300 }}>+</div>
+          <div style={{ fontSize: 14, color: "#8a7d70", fontWeight: 500 }}>Create new table</div>
         </button>
+      </div>
       </div>
     </div>
   );
