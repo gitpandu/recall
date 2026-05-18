@@ -51,8 +51,8 @@ export const IconFilter = ({ size = 14, color = "currentColor" }: { size?: numbe
 );
 
 export const IconPin = ({ size = 14, color = "currentColor", filled = false }: { size?: number; color?: string; filled?: boolean }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : "none"} stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 3l7 7-3 1-3 5-2-2-5 3-1-1 3-5-2-2 5-3 1-3z" />
-    <line x1="4" y1="20" x2="10" y2="14" />
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 17v5" />
+    <path d="M9 10.76a2 2 0 0 1-1.11 1.79L4 15h16l-3.89-2.45a2 2 0 0 1-1.11-1.79V5a2 2 0 0 1 2-2h-10a2 2 0 0 1 2 2z" fill={filled ? color : "none"} />
   </svg>
 );
