@@ -90,9 +90,11 @@ export default function App() {
 
   const handleSaveRow = async (rowId: string | null, values: Record<string, unknown>) => {
     if (!activeTableId) return;
-    if (rowId) await updateRow(activeTableId, rowId, { values });
-    else await createRow(activeTableId, { values });
+    let savedRow;
+    if (rowId) savedRow = await updateRow(activeTableId, rowId, { values });
+    else savedRow = await createRow(activeTableId, { values });
     await loadTableRows(activeTableId);
+    return savedRow.id;
   };
 
   const handleSaveProperties = async (nextProperties: Property[]) => {

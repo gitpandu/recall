@@ -6,7 +6,7 @@ import type { Table, Row, PropertyType } from "../../types";
 const colMinWidth = (type: PropertyType): number =>
   type === "longtext" ? 200 : type === "checkbox" ? 70 : type === "date" ? 110 : type === "currency_idr" ? 150 : 120;
 
-export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRow, onDeleteRow, onViewAttachments, onSort }: {
+export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRow, onDeleteRow, onViewAttachments, onSort, highlightedRowId }: {
   table: Table;
   filtered: Row[];
   page: number;
@@ -16,6 +16,7 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
   onDeleteRow: (row: Row) => void;
   onViewAttachments: (row: Row) => void;
   onSort: (propId: string) => void;
+  highlightedRowId?: string | null;
 }) => {
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -47,7 +48,11 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
             </tr>
           )}
           {paged.map((row, i) => (
-            <tr key={row.id} style={{ borderBottom: "1px solid #ede9e3", background: i % 2 === 0 ? "#faf8f5" : "#f7f4f0" }}>
+            <tr key={row.id} style={{ 
+              borderBottom: "1px solid #ede9e3", 
+              background: row.id === highlightedRowId ? `${table.color}33` : (i % 2 === 0 ? "#faf8f5" : "#f7f4f0"),
+              transition: "background 0.5s ease-out"
+            }}>
               {table.properties.map(prop => (
                 <td key={prop.id} style={{ padding: "10px 16px", fontSize: 13, color: "#3d3028", verticalAlign: "top", minWidth: colMinWidth(prop.type) }}>
                   <CellValue value={row.values[prop.id]} prop={prop} />

@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { TableHeader } from "./TableHeader";
 import { TableGrid } from "./TableGrid";
 import { RowModal } from "./RowModal";
@@ -45,7 +45,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   table: Table;
   onBack: () => void;
   onUpdateTable: (t: Table) => Promise<void>;
-  onSaveRow: (rowId: string | null, values: Record<string, unknown>) => Promise<void>;
+  onSaveRow: (rowId: string | null, values: Record<string, unknown>) => Promise<string | void>;
   onSaveProperties: (properties: Property[]) => Promise<void>;
   onUploadAttachment: (rowId: string, file: File) => Promise<Attachment>;
   onDeleteAttachment: (rowId: string, attachmentId: string) => Promise<void>;
@@ -63,6 +63,8 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   const [showEditTable, setShowEditTable] = useState(false);
   const [showManageProps, setShowManageProps] = useState(false);
   const [galleryRow, setGalleryRow] = useState<Row | null>(null);
+  const [newRowId, setNewRowId] = useState<string | null>(null);
+  const [highlightedRowId, setHighlightedRowId] = useState<string | null>(null);
 
   const propertiesById = useMemo(() => new Map(table.properties.map(p => [p.id, p])), [table.properties]);
 
@@ -147,6 +149,29 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
     return rows;
   }, [table.rows, table.properties, search, sortPropId, sortDir, activeFilters, propertiesById]);
 
+  useEffect(() => {
+    if (newRowId) {
+      const index = filtered.findIndex(r => r.id === newRowId);
+      if (index !== -1) {
+        const targetPage = Math.floor(index / PAGE_SIZE) + 1;
+        if (targetPage !== page) {
+          setPage(targetPage);
+        }
+        setHighlightedRowId(newRowId);
+        setNewRowId(null);
+      }
+    }
+  }, [filtered, newRowId, page]);
+
+  useEffect(() => {
+    if (highlightedRowId) {
+      const timer = setTimeout(() => {
+        setHighlightedRowId(null);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightedRowId]);
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
 
   const handleSort = (id: string) => {
@@ -156,7 +181,11 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   };
 
   const handleSaveRow = async (values: Record<string, unknown>) => {
-    await onSaveRow(rowModal.row?.id ?? null, values);
+    const isNew = !rowModal.row?.id;
+    const savedId = await onSaveRow(rowModal.row?.id ?? null, values);
+    if (isNew && savedId) {
+      setNewRowId(savedId);
+    }
   };
 
   const handleSaveProps = async (properties: Property[]) => {
@@ -352,6 +381,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
         onDeleteRow={(row) => { void handleDeleteRow(row); }}
         onViewAttachments={row => setGalleryRow(row)}
         onSort={handleSort}
+        highlightedRowId={highlightedRowId}
       />
 
       <button onClick={() => setRowModal({ open: true, row: null })}
