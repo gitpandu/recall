@@ -38,7 +38,7 @@ export const AttachmentGallery = ({ attachments, onClose }: { attachments: Attac
     <Modal onClose={onClose}>
       <div style={{ padding: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#2d2520" }}>
+          <h2 style={{ fontSize: 17, color: "#2d2520" }}>
             Attachments ({attachments.length})
           </h2>
           <button onClick={onClose} style={{ color: "#b0a898", background: "none", border: "none", cursor: "pointer", padding: 4 }}>

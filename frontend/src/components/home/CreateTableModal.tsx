@@ -25,7 +25,7 @@ export const CreateTableModal = ({ onClose, onCreate }: {
     <Modal onClose={onClose}>
       <div style={{ padding: 28 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>New Table</h2>
+          <h2 style={{ fontSize: 24, fontWeight: 700, color: "#2d2520", margin: 0 }}>New Table</h2>
           <button onClick={onClose}
             style={{ color: "#b0a898", background: "#f5f2ee", border: "none", cursor: "pointer", padding: 8, borderRadius: "50%", display: "flex", transition: "all 0.15s" }}
             onMouseEnter={e => { e.currentTarget.style.background = "#e5dfd7"; e.currentTarget.style.color = "#2d2520"; }}
