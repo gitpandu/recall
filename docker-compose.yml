@@ -1,9 +1,27 @@
 services:
   recall:
     build: .
+    container_name: recall
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/app/data
-      - ./uploads:/app/uploads
+      - recall_data:/app/data
+      - recall_uploads:/app/uploads
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
     restart: unless-stopped
+    init: true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  recall_data:
+  recall_uploads:
