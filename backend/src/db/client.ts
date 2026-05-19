@@ -1,5 +1,5 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "./schema.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -11,14 +11,14 @@ const DB_PATH = path.join(DATA_DIR, "recall.db");
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-const sqlite = new Database(DB_PATH);
-sqlite.pragma("journal_mode = WAL");
-sqlite.pragma("foreign_keys = ON");
+const client = createClient({
+  url: `file:${DB_PATH}`,
+});
 
-export const db = drizzle(sqlite, { schema });
+export const db = drizzle(client, { schema });
 
-export function migrate() {
-  sqlite.exec(`
+export async function migrate() {
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS tables (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,

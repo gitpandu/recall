@@ -7,7 +7,7 @@ import { UPLOADS_DIR } from "./lib/storage.js";
 
 const PORT = process.env.PORT ?? 3000;
 
-migrate();
+await migrate();
 
 const app = express();
 
