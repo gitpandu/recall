@@ -23,10 +23,9 @@ A personal, lightweight record-keeping application for managing custom databases
 
 ## Project Structure
 
+- `storage/`: Unified storage for database and uploads.
 - `frontend/`: React SPA user interface.
 - `backend/`: Express server, Drizzle ORM schema, and database connection.
-- `data/`: SQLite database storage directory (created locally on startup or mounted in Docker).
-- `uploads/`: Media and attachments uploads folder.
 
 ## Setup & Local Development
 
@@ -85,6 +84,6 @@ docker compose up -d --build
 
 ### 2. Data Persistence
 
-The Docker container mounts two local directories for persistent storage:
-- `./data` -> `/app/data` (Stores the SQLite database `recall.db`)
-- `./uploads` -> `/app/uploads` (Stores uploaded files/attachments)
+The Docker container mounts a single named volume for persistent storage:
+- `recall_storage` -> `/app/storage` (Contains `data/recall.db` and `uploads/` folder)
+
