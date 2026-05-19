@@ -1,53 +1,81 @@
 import { Router } from "express";
-import { eq } from "drizzle-orm";
 import { db } from "../db/client.js";
-import { rows, attachments } from "../db/schema.js";
 import { nanoid } from "nanoid";
 
 export const rowsRouter = Router({ mergeParams: true });
 
 // GET /tables/:tableId/rows
-rowsRouter.get("/", async (req, res, next) => {
+rowsRouter.get("/", (req, res, next) => {
   try {
     const { tableId } = req.params as { tableId: string };
-    const allRows = await db.select().from(rows).where(eq(rows.tableId, tableId)).orderBy(rows.createdAt);
-    const result = await Promise.all(allRows.map(async r => {
-      const atts = await db.select().from(attachments).where(eq(attachments.rowId, r.id));
-      return { ...r, tableId: r.tableId, values: JSON.parse(r.values), attachments: atts };
-    }));
+    const allRows = db.prepare("SELECT * FROM rows WHERE table_id = ? ORDER BY created_at").all(tableId) as any[];
+    
+    const result = allRows.map(r => {
+      const atts = db.prepare("SELECT * FROM attachments WHERE row_id = ?").all(r.id) as any[];
+      return { 
+        ...r, 
+        tableId: r.table_id,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+        values: JSON.parse(r.values), 
+        attachments: atts.map(a => ({ ...a, rowId: a.row_id }))
+      };
+    });
+    
     res.json(result);
   } catch (err) { next(err); }
 });
 
 // POST /tables/:tableId/rows
-rowsRouter.post("/", async (req, res, next) => {
+rowsRouter.post("/", (req, res, next) => {
   try {
     const { tableId } = req.params as { tableId: string };
     const { values = {} } = req.body;
     const id = nanoid();
-    await db.insert(rows).values({ id, tableId, values: JSON.stringify(values) });
-    const row = await db.select().from(rows).where(eq(rows.id, id)).then(r => r[0]);
-    res.status(201).json({ ...row, values: JSON.parse(row.values), attachments: [] });
+    
+    db.prepare("INSERT INTO rows (id, table_id, \"values\", created_at, updated_at) VALUES (?, ?, ?, unixepoch(), unixepoch())")
+      .run(id, tableId, JSON.stringify(values));
+      
+    const row = db.prepare("SELECT * FROM rows WHERE id = ?").get(id) as any;
+    res.status(201).json({ 
+      ...row, 
+      tableId: row.table_id,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      values: JSON.parse(row.values), 
+      attachments: [] 
+    });
   } catch (err) { next(err); }
 });
 
 // PATCH /tables/:tableId/rows/:rowId
-rowsRouter.patch("/:rowId", async (req, res, next) => {
+rowsRouter.patch("/:rowId", (req, res, next) => {
   try {
     const { rowId } = req.params;
     const { values } = req.body;
-    await db.update(rows).set({ values: JSON.stringify(values), updatedAt: new Date() }).where(eq(rows.id, rowId));
-    const row = await db.select().from(rows).where(eq(rows.id, rowId)).then(r => r[0]);
+    
+    db.prepare("UPDATE rows SET \"values\" = ?, updated_at = unixepoch() WHERE id = ?")
+      .run(JSON.stringify(values), rowId);
+      
+    const row = db.prepare("SELECT * FROM rows WHERE id = ?").get(rowId) as any;
     if (!row) return res.status(404).json({ error: "Row not found" });
-    const atts = await db.select().from(attachments).where(eq(attachments.rowId, rowId));
-    res.json({ ...row, values: JSON.parse(row.values), attachments: atts });
+    
+    const atts = db.prepare("SELECT * FROM attachments WHERE row_id = ?").all(rowId) as any[];
+    res.json({ 
+      ...row, 
+      tableId: row.table_id,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      values: JSON.parse(row.values), 
+      attachments: atts.map(a => ({ ...a, rowId: a.row_id }))
+    });
   } catch (err) { next(err); }
 });
 
 // DELETE /tables/:tableId/rows/:rowId
-rowsRouter.delete("/:rowId", async (req, res, next) => {
+rowsRouter.delete("/:rowId", (req, res, next) => {
   try {
-    await db.delete(rows).where(eq(rows.id, req.params.rowId));
+    db.prepare("DELETE FROM rows WHERE id = ?").run(req.params.rowId);
     res.status(204).end();
   } catch (err) { next(err); }
 });

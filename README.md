@@ -44,14 +44,9 @@ npm install --prefix frontend
 npm install --prefix backend
 ```
 
-### 2. Run Database Migrations
+### 2. Database Setup
 
-Generate and run Drizzle migrations to set up the SQLite database schema:
-
-```bash
-npm run db:generate --prefix backend
-npm run db:migrate --prefix backend
-```
+The SQLite database is initialized automatically on the first run of the application.
 
 ### 3. Run Development Servers
 
@@ -86,4 +81,8 @@ docker compose up -d --build
 
 The Docker container mounts a single named volume for persistent storage:
 - `recall_storage` -> `/app/storage` (Contains `data/recall.db` and `uploads/` folder)
+
+ -> `/app/storage` (Contains `data/recall.db` and `uploads/` folder)
+
+` folder)
 

@@ -1,36 +1,34 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+export interface Table {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  pinned: boolean;
+  createdAt: number; // unix epoch
+}
 
-export const tables = sqliteTable("tables", {
-  id:          text("id").primaryKey(),
-  name:        text("name").notNull(),
-  description: text("description").notNull().default(""),
-  color:       text("color").notNull().default("#c0764a"),
-  pinned:      integer("pinned", { mode: "boolean" }).notNull().default(false),
-  createdAt:   integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-});
+export interface Property {
+  id: string;
+  tableId: string;
+  name: string;
+  type: string;
+  color: string;
+  options: string | null;
+  order: number;
+}
 
-export const properties = sqliteTable("properties", {
-  id:      text("id").primaryKey(),
-  tableId: text("table_id").notNull().references(() => tables.id, { onDelete: "cascade" }),
-  name:    text("name").notNull(),
-  type:    text("type").notNull(),
-  color:   text("color").notNull().default("#c0764a"),
-  options: text("options"),
-  order:   integer("order").notNull().default(0),
-});
+export interface Row {
+  id: string;
+  tableId: string;
+  values: string; // JSON string
+  createdAt: number;
+  updatedAt: number;
+}
 
-export const rows = sqliteTable("rows", {
-  id:        text("id").primaryKey(),
-  tableId:   text("table_id").notNull().references(() => tables.id, { onDelete: "cascade" }),
-  values:    text("values").notNull().default("{}"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-});
-
-export const attachments = sqliteTable("attachments", {
-  id:       text("id").primaryKey(),
-  rowId:    text("row_id").notNull().references(() => rows.id, { onDelete: "cascade" }),
-  name:     text("name").notNull(),
-  filename: text("filename").notNull(),
-  url:      text("url").notNull(),
-});
+export interface Attachment {
+  id: string;
+  rowId: string;
+  name: string;
+  filename: string;
+  url: string;
+}

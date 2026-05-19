@@ -1,13 +1,14 @@
 # --- Stage 1: Frontend Build ---
-FROM node:20-alpine AS frontend-builder
+FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend
+# Use npm ci for faster, more reliable builds
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
 # --- Stage 2: Backend Build ---
-FROM node:20-alpine AS backend-builder
+FROM node:22-alpine AS backend-builder
 WORKDIR /app/backend
 COPY backend/package*.json ./
 RUN npm ci
@@ -15,7 +16,7 @@ COPY backend/ ./
 RUN npm run build
 
 # --- Stage 3: Production Image ---
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 
 # Only copy production dependencies for the backend

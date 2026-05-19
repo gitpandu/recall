@@ -1,61 +1,97 @@
 import { Router } from "express";
-import { eq, sql } from "drizzle-orm";
 import { db } from "../db/client.js";
-import { tables, properties, rows } from "../db/schema.js";
 import { nanoid } from "nanoid";
 
 export const tablesRouter = Router();
 
 // GET /tables
-tablesRouter.get("/", async (_req, res, next) => {
+tablesRouter.get("/", (_req, res, next) => {
   try {
-    const all = await db.select().from(tables).orderBy(tables.createdAt);
-    const result = await Promise.all(all.map(async t => {
-      const props = await db.select().from(properties).where(eq(properties.tableId, t.id)).orderBy(properties.order);
-      const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(rows).where(eq(rows.tableId, t.id));
+    const allTables = db.prepare("SELECT * FROM tables ORDER BY created_at").all() as any[];
+    
+    const result = allTables.map(t => {
+      const props = db.prepare("SELECT * FROM properties WHERE table_id = ? ORDER BY \"order\"").all(t.id) as any[];
+      const rowCountResult = db.prepare("SELECT count(*) as count FROM rows WHERE table_id = ?").get(t.id) as { count: number };
+      
       return {
-        ...t,
-        properties: props.map(p => ({ ...p, options: p.options ? JSON.parse(p.options) : undefined })),
-        rowCount: count,
+        id: t.id,
+        name: t.name,
+        description: t.description,
+        color: t.color,
+        pinned: Boolean(t.pinned),
+        createdAt: t.created_at,
+        properties: props.map(p => ({
+          ...p,
+          tableId: p.table_id,
+          options: p.options ? JSON.parse(p.options) : undefined
+        })),
+        rowCount: rowCountResult.count,
       };
-    }));
+    });
+    
     res.json(result);
   } catch (err) { next(err); }
 });
 
 // POST /tables
-tablesRouter.post("/", async (req, res, next) => {
+tablesRouter.post("/", (req, res, next) => {
   try {
     const { name, description = "", color = "#c0764a", pinned = false } = req.body;
     if (!name) return res.status(400).json({ error: "name is required" });
     const id = nanoid();
-    await db.insert(tables).values({ id, name, description, color, pinned });
-    const table = await db.select().from(tables).where(eq(tables.id, id)).then(r => r[0]);
-    res.status(201).json({ ...table, properties: [], rowCount: 0 });
+    
+    db.prepare("INSERT INTO tables (id, name, description, color, pinned) VALUES (?, ?, ?, ?, ?)")
+      .run(id, name, description, color, pinned ? 1 : 0);
+      
+    const table = db.prepare("SELECT * FROM tables WHERE id = ?").get(id) as any;
+    
+    res.status(201).json({
+      ...table,
+      pinned: Boolean(table.pinned),
+      createdAt: table.created_at,
+      properties: [],
+      rowCount: 0
+    });
   } catch (err) { next(err); }
 });
 
 // PATCH /tables/:id
-tablesRouter.patch("/:id", async (req, res, next) => {
+tablesRouter.patch("/:id", (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, description, color, pinned } = req.body;
-    await db.update(tables).set({
-      ...(name && { name }),
-      ...(description !== undefined && { description }),
-      ...(color && { color }),
-      ...(pinned !== undefined && { pinned }),
-    }).where(eq(tables.id, id));
-    const table = await db.select().from(tables).where(eq(tables.id, id)).then(r => r[0]);
-    if (!table) return res.status(404).json({ error: "Table not found" });
-    res.json(table);
+    
+    const current = db.prepare("SELECT * FROM tables WHERE id = ?").get(id) as any;
+    if (!current) return res.status(404).json({ error: "Table not found" });
+
+    db.prepare(`
+      UPDATE tables SET 
+        name = ?, 
+        description = ?, 
+        color = ?, 
+        pinned = ?
+      WHERE id = ?
+    `).run(
+      name ?? current.name,
+      description ?? current.description,
+      color ?? current.color,
+      pinned !== undefined ? (pinned ? 1 : 0) : current.pinned,
+      id
+    );
+
+    const table = db.prepare("SELECT * FROM tables WHERE id = ?").get(id) as any;
+    res.json({
+      ...table,
+      pinned: Boolean(table.pinned),
+      createdAt: table.created_at
+    });
   } catch (err) { next(err); }
 });
 
 // DELETE /tables/:id
-tablesRouter.delete("/:id", async (req, res, next) => {
+tablesRouter.delete("/:id", (req, res, next) => {
   try {
-    await db.delete(tables).where(eq(tables.id, req.params.id));
+    db.prepare("DELETE FROM tables WHERE id = ?").run(req.params.id);
     res.status(204).end();
   } catch (err) { next(err); }
 });

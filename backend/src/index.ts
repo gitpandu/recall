@@ -12,7 +12,7 @@ const FRONTEND_DIST = path.resolve(__dirname, "../../frontend/dist");
 
 const PORT = process.env.PORT ?? 3000;
 
-await migrate();
+migrate();
 
 const app = express();
 
