@@ -15,9 +15,9 @@ A personal, lightweight record-keeping application for managing custom databases
 
 ## Tech Stack
 
-- **Frontend**: React, TypeScript, Tailwind CSS, Vite.
+- **Frontend**: React, TypeScript, Tailwind CSS (v3), Vite.
 - **Backend**: Express, Node.js, TypeScript.
-- **Database**: SQLite (`better-sqlite3`) managed via Drizzle ORM.
+- **Database**: SQLite (via `@libsql/client`) managed via Drizzle ORM.
 - **Uploads**: Local disk storage using `multer`.
 - **Deployment**: Docker and Docker Compose support.
 
@@ -86,5 +86,5 @@ docker compose up -d --build
 ### 2. Data Persistence
 
 The Docker container mounts two local directories for persistent storage:
-- `./data` -> `/app/data` (Stores the SQLite database `sqlite.db`)
+- `./data` -> `/app/data` (Stores the SQLite database `recall.db`)
 - `./uploads` -> `/app/uploads` (Stores uploaded files/attachments)
