@@ -3,13 +3,13 @@ services:
     build: .
     container_name: recall
     ports:
-      - "3000:3000"
+      - "3002:3000"
     volumes:
-      - recall_data:/app/data
-      - recall_uploads:/app/uploads
+      - recall_storage:/app/storage
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - STORAGE_PATH=/app/storage
     restart: unless-stopped
     init: true
     deploy:
@@ -23,5 +23,4 @@ services:
         max-file: "3"
 
 volumes:
-  recall_data:
-  recall_uploads:
+  recall_storage:

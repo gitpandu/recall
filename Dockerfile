@@ -28,11 +28,12 @@ COPY --from=backend-builder /app/backend/dist ./backend/dist
 # Copy frontend static assets
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# Setup data directory and uploads
-RUN mkdir -p /app/data /app/uploads
+# Setup storage directory
+RUN mkdir -p /app/storage
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV STORAGE_PATH=/app/storage
 
 EXPOSE 3000
 

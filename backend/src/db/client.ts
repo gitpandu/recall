@@ -6,7 +6,10 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.resolve(__dirname, "../../../data");
+const STORAGE_DIR = process.env.STORAGE_PATH 
+  ? path.resolve(process.env.STORAGE_PATH)
+  : path.resolve(__dirname, "../../../storage");
+const DATA_DIR = path.join(STORAGE_DIR, "data");
 const DB_PATH = path.join(DATA_DIR, "recall.db");
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
