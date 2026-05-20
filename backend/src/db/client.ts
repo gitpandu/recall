@@ -22,6 +22,7 @@ export function migrate() {
       description TEXT NOT NULL DEFAULT '',
       color TEXT NOT NULL DEFAULT '#c0764a',
       pinned INTEGER NOT NULL DEFAULT 0,
+      group_name TEXT NOT NULL DEFAULT '',
       created_at INTEGER NOT NULL DEFAULT (unixepoch())
     );
 

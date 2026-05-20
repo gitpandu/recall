@@ -4,14 +4,16 @@ import { IconX } from "../../components/ui/icons";
 import { TABLE_COLORS } from "../../constants";
 import type { Table } from "../../types";
 
-export const EditTableModal = ({ table, onClose, onSave, onDelete }: {
+export const EditTableModal = ({ table, onClose, onSave, onDelete, existingGroups = [] }: {
   table: Table;
   onClose: () => void;
   onSave: (table: Table) => Promise<void>;
   onDelete: (tableId: string) => Promise<void>;
+  existingGroups?: string[];
 }) => {
   const [name, setName] = useState(table.name);
   const [description, setDescription] = useState(table.description);
+  const [group, setGroup] = useState(table.group || "");
   const [color, setColor] = useState(table.color);
   const [saving, setSaving] = useState(false);
 
@@ -19,10 +21,11 @@ export const EditTableModal = ({ table, onClose, onSave, onDelete }: {
     setName(table.name);
     setDescription(table.description);
     setColor(table.color);
-  }, [table.id, table.name, table.description, table.color]);
+    setGroup(table.group || "");
+  }, [table.id, table.name, table.description, table.color, table.group]);
 
   const handleSave = async () => {
-    const next = { ...table, name: name.trim() || table.name, description: description.trim(), color };
+    const next = { ...table, name: name.trim() || table.name, description: description.trim(), group: group.trim(), color };
     try {
       setSaving(true);
       await onSave(next);
@@ -71,6 +74,24 @@ export const EditTableModal = ({ table, onClose, onSave, onDelete }: {
             onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }}
             onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }}
           />
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Group / Label</label>
+          <input
+            value={group}
+            onChange={e => setGroup(e.target.value)}
+            placeholder="e.g. Work, Personal (optional)…"
+            list="edit-table-groups"
+            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10, padding: "12px 14px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s" }}
+            onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }}
+            onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }}
+          />
+          <datalist id="edit-table-groups">
+            {existingGroups.map(g => (
+              <option key={g} value={g} />
+            ))}
+          </datalist>
         </div>
 
         <div style={{ marginBottom: 32 }}>

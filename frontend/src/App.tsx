@@ -67,12 +67,18 @@ export default function App() {
     [tables, activeTableId],
   );
 
+  const existingGroups = useMemo(
+    () => Array.from(new Set(tables.map(t => t.group).filter(Boolean))),
+    [tables],
+  );
+
   const handleUpdateTable = async (updated: Table) => {
     const saved = await updateTable(updated.id, {
       name: updated.name,
       description: updated.description,
       color: updated.color,
       pinned: updated.pinned,
+      group: updated.group,
     });
     setTables(prev => prev.map(t => (t.id === saved.id ? { ...t, ...saved } : t)));
   };
@@ -82,7 +88,7 @@ export default function App() {
     setTables(prev => prev.map(t => (t.id === saved.id ? { ...t, ...saved } : t)));
   };
 
-  const handleCreateTable = async (data: { name: string; description: string; color: string }) => {
+  const handleCreateTable = async (data: { name: string; description: string; color: string; group?: string }) => {
     const table = await createTable(data);
     const titleProp = await createProperty(table.id, { name: "Title", type: "text", color: table.color });
     setTables(prev => [...prev, { ...table, properties: [titleProp], rows: [] }]);
@@ -203,14 +209,15 @@ export default function App() {
         onDeleteAttachment={handleDeleteAttachment}
         onDeleteTable={handleDeleteTable}
         onDeleteRow={handleDeleteRow}
+        existingGroups={existingGroups}
       />
     );
   }
 
   return (
     <>
-      <HomePage tables={tables} onSelectTable={t => setActiveTableId(t.id)} onCreateTable={() => setShowCreate(true)} onTogglePin={(table) => { void handleTogglePin(table); }} />
-      {showCreate && <CreateTableModal onClose={() => setShowCreate(false)} onCreate={(data) => { void handleCreateTable(data); }} />}
+      <HomePage tables={tables} onSelectTable={t => setActiveTableId(t.id)} onCreateTable={() => setShowCreate(true)} onTogglePin={(table) => { void handleTogglePin(table); }} onUpdateTable={handleUpdateTable} />
+      {showCreate && <CreateTableModal onClose={() => setShowCreate(false)} onCreate={(data) => { void handleCreateTable(data); }} existingGroups={existingGroups} />}
     </>
   );
 }

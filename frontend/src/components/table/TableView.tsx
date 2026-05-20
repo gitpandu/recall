@@ -41,7 +41,7 @@ const normalizeDate = (value: unknown): string => {
   return date.toISOString().slice(0, 10);
 };
 
-export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSaveProperties, onUploadAttachment, onDeleteAttachment, onDeleteTable, onDeleteRow }: {
+export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSaveProperties, onUploadAttachment, onDeleteAttachment, onDeleteTable, onDeleteRow, existingGroups = [] }: {
   table: Table;
   onBack: () => void;
   onUpdateTable: (t: Table) => Promise<void>;
@@ -51,6 +51,7 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
   onDeleteAttachment: (rowId: string, attachmentId: string) => Promise<void>;
   onDeleteTable: (tableId: string) => Promise<void>;
   onDeleteRow: (rowId: string) => Promise<void>;
+  existingGroups?: string[];
 }) => {
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -502,12 +503,13 @@ export const TableView = ({ table, onBack, onUpdateTable, onSaveRow, onSavePrope
           onDeleteRow={rowModal.row ? () => { void handleDeleteRow(rowModal.row!); } : undefined}
         />
       )}
-      {showEditTable && (
+       {showEditTable && (
         <EditTableModal
           table={table}
           onClose={() => setShowEditTable(false)}
           onSave={handleSaveTable}
           onDelete={handleDeleteTable}
+          existingGroups={existingGroups}
         />
       )}
       {showManageProps && (

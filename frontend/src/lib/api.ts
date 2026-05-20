@@ -17,10 +17,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const getTables = (): Promise<Table[]> =>
   request("/tables");
 
-export const createTable = (data: { name: string; description: string; color: string }): Promise<Table> =>
+export const createTable = (data: { name: string; description: string; color: string; group?: string }): Promise<Table> =>
   request("/tables", { method: "POST", body: JSON.stringify(data) });
 
-export const updateTable = (id: string, data: Partial<Pick<Table, "name" | "description" | "color" | "pinned">>): Promise<Table> =>
+export const updateTable = (id: string, data: Partial<Pick<Table, "name" | "description" | "color" | "pinned" | "group">>): Promise<Table> =>
   request(`/tables/${id}`, { method: "PATCH", body: JSON.stringify(data) });
 
 export const deleteTable = (id: string): Promise<void> =>

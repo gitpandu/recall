@@ -37,6 +37,7 @@ export interface Table {
   description: string;
   color: string;
   pinned: boolean;
+  group: string;
   properties: Property[];
   rowCount: number;
   rows: Row[];

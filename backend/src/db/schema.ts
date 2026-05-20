@@ -4,6 +4,7 @@ export interface Table {
   description: string;
   color: string;
   pinned: boolean;
+  group: string;
   createdAt: number; // unix epoch
 }
 

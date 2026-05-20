@@ -3,12 +3,14 @@ import { Modal } from "../../components/ui/Modal";
 import { IconX } from "../../components/ui/icons";
 import { TABLE_COLORS } from "../../constants";
 
-export const CreateTableModal = ({ onClose, onCreate }: {
+export const CreateTableModal = ({ onClose, onCreate, existingGroups = [] }: {
   onClose: () => void;
-  onCreate: (t: { name: string; description: string; color: string }) => void;
+  onCreate: (t: { name: string; description: string; color: string; group: string }) => void;
+  existingGroups?: string[];
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [group, setGroup] = useState("");
   const [color, setColor] = useState(TABLE_COLORS[0]);
 
   const handleCreate = () => {
@@ -16,6 +18,7 @@ export const CreateTableModal = ({ onClose, onCreate }: {
     onCreate({
       name: name.trim(),
       description: description.trim(),
+      group: group.trim(),
       color,
     });
     onClose();
@@ -50,9 +53,22 @@ export const CreateTableModal = ({ onClose, onCreate }: {
             style={{ width: "100%", border: `1.5px solid ${color}`, borderRadius: 10, padding: "12px 14px", fontSize: 15, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s", boxShadow: `0 0 0 3px ${color}1a` }} />
         </div>
 
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Group / Label</label>
+          <input value={group} onChange={e => setGroup(e.target.value)} onKeyDown={e => e.key === "Enter" && handleCreate()} placeholder="e.g. Work, Personal (optional)…" list="create-table-groups"
+            style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10, padding: "12px 14px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s" }}
+            onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }}
+            onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }} />
+          <datalist id="create-table-groups">
+            {existingGroups.map(g => (
+              <option key={g} value={g} />
+            ))}
+          </datalist>
+        </div>
+
         <div style={{ marginBottom: 32 }}>
           <label style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 8 }}>Description</label>
-          <input value={description} onChange={e => setDescription(e.target.value)} placeholder="Short description…"
+          <input value={description} onChange={e => setDescription(e.target.value)} onKeyDown={e => e.key === "Enter" && handleCreate()} placeholder="Short description…"
             style={{ width: "100%", border: "1.5px solid #e5dfd7", borderRadius: 10, padding: "12px 14px", fontSize: 14, color: "#2d2520", outline: "none", background: "#fff", boxSizing: "border-box", transition: "all 0.2s" }}
             onFocus={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 0 0 3px ${color}1a`; }}
             onBlur={e => { e.currentTarget.style.borderColor = "#e5dfd7"; e.currentTarget.style.boxShadow = "none"; }} />
