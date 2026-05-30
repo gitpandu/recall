@@ -67,4 +67,15 @@ export const PROPERTY_TYPE_META: Record<PropertyType, { bg: string; text: string
   multiselect: { bg: "#ffedd5", text: "#ea580c" },
 };
 
+export const PROPERTY_MAX_WIDTH: Record<PropertyType, number> = {
+  text: 300,
+  longtext: 500,
+  number: 150,
+  currency_idr: 200,
+  date: 150,
+  checkbox: 100,
+  select: 200,
+  multiselect: 250,
+};
+
 export const PAGE_SIZE = 10;

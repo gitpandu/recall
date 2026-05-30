@@ -1,6 +1,6 @@
 import { CellValue } from "./CellValue";
 import { IconPaperclip } from "../../components/ui/icons";
-import { PAGE_SIZE } from "../../constants";
+import { PAGE_SIZE, PROPERTY_MAX_WIDTH } from "../../constants";
 import type { Table, Row, PropertyType } from "../../types";
 
 const colMinWidth = (type: PropertyType): number =>
@@ -32,7 +32,7 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
           <tr style={{ borderBottom: "2px solid #e5dfd7", background: "#faf8f5" }}>
             {table.properties.map(prop => (
               <th key={prop.id} onClick={() => onSort(prop.id)}
-                style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: sortPropId === prop.id ? prop.color : "#8a7d70", textTransform: "uppercase", letterSpacing: "0.08em", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none", minWidth: colMinWidth(prop.type), borderBottom: sortPropId === prop.id ? `2px solid ${prop.color}` : undefined }}>
+                style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: sortPropId === prop.id ? prop.color : "#8a7d70", textTransform: "uppercase", letterSpacing: "0.08em", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none", minWidth: colMinWidth(prop.type), maxWidth: PROPERTY_MAX_WIDTH[prop.type], borderBottom: sortPropId === prop.id ? `2px solid ${prop.color}` : undefined }}>
                 <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 7, height: 7, borderRadius: "50%", background: prop.color, display: "inline-block", flexShrink: 0 }} />
                   {prop.name}
@@ -61,8 +61,10 @@ export const TableGrid = ({ table, filtered, page, sortPropId, sortDir, onEditRo
             onMouseEnter={e => { if (row.id !== highlightedRowId) e.currentTarget.style.background = "#f4f0eb"; }}
             onMouseLeave={e => { if (row.id !== highlightedRowId) e.currentTarget.style.background = i % 2 === 0 ? "#fff" : "#faf8f5"; }}>
               {table.properties.map(prop => (
-                <td key={prop.id} style={{ padding: "12px 16px", fontSize: 13, color: "#2d2520", verticalAlign: "top", minWidth: colMinWidth(prop.type) }}>
-                  <CellValue value={row.values[prop.id]} prop={prop} />
+                <td key={prop.id} style={{ padding: "12px 16px", fontSize: 13, color: "#2d2520", verticalAlign: "top", minWidth: colMinWidth(prop.type), maxWidth: PROPERTY_MAX_WIDTH[prop.type] }}>
+                  <div style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
+                    <CellValue value={row.values[prop.id]} prop={prop} />
+                  </div>
                 </td>
               ))}
               <td style={{ padding: "12px 16px", verticalAlign: "top", textAlign: "center" }}>
