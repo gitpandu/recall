@@ -36,6 +36,7 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
   const [attachments, setAttachments] = useState<Attachment[]>(row?.attachments ?? []);
   const [uploading, setUploading] = useState(false);
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
+  const [metadataExpanded, setMetadataExpanded] = useState(false);
   const set = useCallback((id: string, val: unknown) => setValues(prev => ({ ...prev, [id]: val })), []);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -187,14 +188,22 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
           )}
 
           {row && (
-            <div style={{ background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "10px 12px", display: "grid", gap: 6 }}>
-              <div style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600 }}>
+            <div style={{ background: "#fff", border: "1px solid #e5dfd7", borderRadius: 8, padding: "10px 12px" }}>
+              <div
+                onClick={() => setMetadataExpanded(!metadataExpanded)}
+                style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
                 Metadata
+                <span style={{ fontSize: 10 }}>{metadataExpanded ? "▲" : "▼"}</span>
               </div>
-              <div style={{ fontSize: 12, color: "#6a5d50" }}>Row ID: {row.id}</div>
-              <div style={{ fontSize: 12, color: "#6a5d50" }}>Table: {table.name} (ID: {table.id})</div>
-              <div style={{ fontSize: 12, color: "#6a5d50" }}>Created: {formatTimestamp(row.createdAt)}</div>
-              <div style={{ fontSize: 12, color: "#6a5d50" }}>Updated: {formatTimestamp(row.updatedAt)}</div>
+              {metadataExpanded && (
+                <div style={{ display: "grid", gap: 6, marginTop: 8 }}>
+                  <div style={{ fontSize: 12, color: "#6a5d50" }}>Row ID: {row.id}</div>
+                  <div style={{ fontSize: 12, color: "#6a5d50" }}>Table: {table.name} (ID: {table.id})</div>
+                  <div style={{ fontSize: 12, color: "#6a5d50" }}>Created: {formatTimestamp(row.createdAt)}</div>
+                  <div style={{ fontSize: 12, color: "#6a5d50" }}>Updated: {formatTimestamp(row.updatedAt)}</div>
+                </div>
+              )}
             </div>
           )}
         </div>
