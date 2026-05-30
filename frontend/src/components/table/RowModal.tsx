@@ -191,6 +191,8 @@ export const RowModal = ({ table, row, onClose, onSave, onUploadAttachment, onDe
               <div style={{ fontSize: 11, color: "#8a7d70", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600 }}>
                 Metadata
               </div>
+              <div style={{ fontSize: 12, color: "#6a5d50" }}>Row ID: {row.id}</div>
+              <div style={{ fontSize: 12, color: "#6a5d50" }}>Table: {table.name} (ID: {table.id})</div>
               <div style={{ fontSize: 12, color: "#6a5d50" }}>Created: {formatTimestamp(row.createdAt)}</div>
               <div style={{ fontSize: 12, color: "#6a5d50" }}>Updated: {formatTimestamp(row.updatedAt)}</div>
             </div>
