@@ -4,13 +4,12 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STORAGE_DIR = process.env.STORAGE_PATH 
+const STORAGE_DIR = process.env.STORAGE_PATH
   ? path.resolve(process.env.STORAGE_PATH)
-  : path.resolve(__dirname, "../../../storage");
-const DATA_DIR = path.join(STORAGE_DIR, "data");
-const DB_PATH = path.join(DATA_DIR, "recall.db");
+  : path.resolve(__dirname, "../../../../data");
+const DB_PATH = path.join(STORAGE_DIR, "recall.db");
 
-fs.mkdirSync(DATA_DIR, { recursive: true });
+fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
 export const db = new DatabaseSync(DB_PATH);
 

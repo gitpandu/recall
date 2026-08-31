@@ -1,26 +1,33 @@
+name: recall
+
 services:
   recall:
     build: .
     container_name: recall
+    restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
-      - recall_storage:/app/storage
+      - ./data:/app/data
     environment:
-      - NODE_ENV=production
       - PORT=3000
-      - STORAGE_PATH=/app/storage
-    restart: unless-stopped
-    init: true
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+      - NODE_ENV=production
+      - STORAGE_PATH=/app/data
 
-volumes:
-  recall_storage:
+x-casaos:
+  main: recall
+  index: /
+  port_map: "3000"
+  title:
+    en_US: Recall
+  tagline:
+    en_US: Lightweight personal tables and records
+  description:
+    en_US: A personal, lightweight record-keeping app for custom tables, properties, rows, and attachments.
+  icon: ""
+  author: you
+  developer: you
+  category: Productivity
+  architectures:
+    - amd64
+    - arm64

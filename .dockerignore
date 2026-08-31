@@ -2,7 +2,7 @@
 **/node_modules
 **/dist
 
-# Data and Uploads (handled by volumes)
+# Data and Uploads (bind-mounted at runtime)
 data/
 uploads/
 

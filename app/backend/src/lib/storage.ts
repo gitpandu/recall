@@ -5,9 +5,9 @@ import fs from "fs";
 import { nanoid } from "nanoid";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STORAGE_DIR = process.env.STORAGE_PATH 
+const STORAGE_DIR = process.env.STORAGE_PATH
   ? path.resolve(process.env.STORAGE_PATH)
-  : path.resolve(__dirname, "../../../storage");
+  : path.resolve(__dirname, "../../../../data");
 export const UPLOADS_DIR = path.join(STORAGE_DIR, "uploads");
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });

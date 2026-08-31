@@ -1,27 +1,28 @@
 # Dependencies
 node_modules/
-backend/node_modules/
-frontend/node_modules/
+app/node_modules/
+app/backend/node_modules/
+app/frontend/node_modules/
 
 # Build output
 dist/
-backend/dist/
-frontend/dist/
+app/backend/dist/
+app/frontend/dist/
 
 # TypeScript caches
 *.tsbuildinfo
-frontend/node_modules/.tmp/
+app/frontend/node_modules/.tmp/
 
 # Environment files
 .env
 .env.*
 !.env.example
-backend/.env
-backend/.env.*
-!backend/.env.example
-frontend/.env
-frontend/.env.*
-!frontend/.env.example
+app/backend/.env
+app/backend/.env.*
+!app/backend/.env.example
+app/frontend/.env
+app/frontend/.env.*
+!app/frontend/.env.example
 
 # Logs
 *.log
@@ -31,10 +32,11 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Runtime/app data
-data/
+data/*
+!data/.gitkeep
 uploads/
-backend/uploads/
-backend/data/
+app/backend/uploads/
+app/backend/data/
 
 # OS/editor
 .DS_Store

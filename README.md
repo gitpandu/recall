@@ -23,9 +23,9 @@ A personal, lightweight record-keeping application for managing custom databases
 
 ## Project Structure
 
-- `storage/`: Unified storage for database and uploads.
-- `frontend/`: React SPA user interface.
-- `backend/`: Express server, Drizzle ORM schema, and database connection.
+- `app/frontend/`: React SPA user interface.
+- `app/backend/`: Express server, Drizzle ORM schema, and database connection.
+- `data/`: SQLite database (`recall.db`) and uploaded files (`uploads/`).
 
 ## Setup & Local Development
 
@@ -36,9 +36,10 @@ A personal, lightweight record-keeping application for managing custom databases
 
 ### 1. Install Dependencies
 
-In the root directory, run:
+In the `app` directory, run:
 
 ```bash
+cd app
 npm install
 npm install --prefix frontend
 npm install --prefix backend
@@ -50,7 +51,7 @@ The SQLite database is initialized automatically on the first run of the applica
 
 ### 3. Run Development Servers
 
-Run both the frontend and backend servers concurrently:
+From `app/`, run both the frontend and backend servers concurrently:
 
 ```bash
 npm run dev
@@ -79,10 +80,5 @@ docker compose up -d --build
 
 ### 2. Data Persistence
 
-The Docker container mounts a single named volume for persistent storage:
-- `recall_storage` -> `/app/storage` (Contains `data/recall.db` and `uploads/` folder)
-
- -> `/app/storage` (Contains `data/recall.db` and `uploads/` folder)
-
-` folder)
-
+The container bind-mounts the host `data/` folder:
+- `./data` -> `/app/data` (contains `recall.db` and `uploads/`)
